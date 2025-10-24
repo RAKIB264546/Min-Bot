@@ -7,13 +7,16 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --card-bg-color: #ffffff;
+            --bg-color: #ffffff;
+            --secondary-bg-color: #f0f2f5;
             --text-color: #000000;
             --hint-color: #65676b;
             --accent-color: #007bff;
             --button-color: #007bff;
-            --top-bar-bg: #003366;
+            --primary-bg-color: #003366; /* Dark blue for top bar */
+            --bottom-nav-bg: #ffffff;
+            --bottom-nav-icon-active: #003366;
+            --bottom-nav-icon: #65676b;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -26,6 +29,18 @@
             height: 100vh;
             overflow: hidden;
         }
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            background-color: var(--bg-color); z-index: 1000;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--accent-color);
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
         #app-content {
             flex-grow: 1;
             display: flex;
@@ -33,11 +48,10 @@
             overflow: hidden;
         }
         .top-bar {
-            background-color: var(--top-bar-bg);
+            background-color: var(--primary-bg-color);
             padding: 10px 15px;
             display: flex;
             align-items: center;
-            flex-shrink: 0;
         }
         .profile-picture {
             width: 45px; height: 45px;
@@ -48,27 +62,25 @@
         .profile-name { font-size: 1.1em; font-weight: 600; color: #ffffff; }
         .balance-text { font-size: 0.9em; color: #e0e0e0; }
         .notification-bar {
-            background-color: #004080;
+            background-color: #004080; /* Slightly lighter blue */
             color: white;
             padding: 8px 15px;
             text-align: left;
             font-size: 0.9em;
-            flex-shrink: 0;
         }
         #pages-container {
             flex-grow: 1;
             overflow-y: auto;
-            /* Add padding to the bottom to avoid content being hidden by the nav bar */
-            padding: 15px 15px 80px 15px;
+            padding: 15px;
         }
         .page { display: none; }
         .page.active { display: block; }
         .home-card {
-            background-color: var(--card-bg-color);
+            background-color: #ffffff;
             border-radius: 12px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .home-card h1 {
             font-size: 1.4em;
@@ -118,47 +130,33 @@
             width: 20px; height: 20px;
             margin-right: 8px;
         }
-        
-        /* FINAL - PERFECTED Bottom Navigation Bar Styles */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-around;
-            /* Precise gradient matching the image */
-            background: linear-gradient(to right, #4a23a9, #2b6dfe);
-            padding-top: 8px;
-            padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+            position: fixed; bottom: 0; left: 0; right: 0;
+            display: flex; justify-content: space-around;
+            background-color: var(--bottom-nav-bg);
+            padding: 10px 0;
+            border-top: 1px solid #e0e0e0;
+            padding-bottom: env(safe-area-inset-bottom, 10px);
             z-index: 100;
         }
         .nav-button {
-            background: none;
-            border: none;
-            color: #ffffff; /* All icons and text are white */
-            opacity: 0.8; /* Inactive buttons are slightly transparent */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 12px;
-            font-weight: 500; /* Medium font weight as seen in image */
-            cursor: pointer;
-            transition: opacity 0.2s;
-            width: 25%;
-            padding: 0;
+            background: none; border: none;
+            color: var(--bottom-nav-icon);
+            display: flex; flex-direction: column;
+            align-items: center; font-size: 12px;
+            cursor: pointer; transition: color 0.2s;
+            width: 20%;
         }
-        .nav-button.active {
-            opacity: 1; /* Active button is fully opaque */
-        }
+        .nav-button.active { color: var(--bottom-nav-icon-active); }
         .nav-button svg {
-            width: 24px;
-            height: 24px;
+            width: 24px; height: 24px;
             margin-bottom: 4px;
         }
     </style>
 </head>
 <body>
+    <div id="loader" style="display: none;"><div class="spinner"></div></div>
+
     <div id="app-content">
         <!-- Top Profile Bar -->
         <div class="top-bar">
@@ -182,7 +180,7 @@
                     <p>Start Earning Money Now</p>
                     <button class="earn-now-btn">Earn Now</button>
                     <div class="main-image-container">
-                        <img src="https://i.postimg.cc/6pFDs8m1/HORSE-OTP-BOT.png" alt="Earn Money" class="main-image">
+                        <img src="https://i.ibb.co/yFxLGv7/money-plant.png" alt="Earn Money" class="main-image">
                         <button class="refer-btn">
                             <svg fill="currentColor" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                             Refer & Earn
@@ -196,20 +194,18 @@
         </div>
     </div>
 
-    <!-- PERFECTED Bottom Navigation -->
+    <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <button class="nav-button active" onclick="showPage('home-page', this)">
-            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
             <span>Home</span>
         </button>
         <button class="nav-button" onclick="showPage('earn-page', this)">
-            <!-- Exact Icon for Earn -->
-            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.89-2-2-2zM4 18V6h16v12H4zm8-7a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/></svg>
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zM4 18V6h16v12H4zm6-7h4v4h-4z"/></svg>
             <span>Earn</span>
         </button>
         <button class="nav-button" onclick="showPage('withdraw-page', this)">
-            <!-- Exact Icon for Withdraw -->
-            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg>
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
             <span>Withdraw</span>
         </button>
         <button class="nav-button" onclick="showPage('profile-page', this)">
@@ -229,6 +225,7 @@
         
         function loadUserData() {
             try {
+                // Check if running inside Telegram
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     const user = tg.initDataUnsafe.user;
                     const userName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
@@ -242,6 +239,7 @@
                 }
             } catch (e) {
                 console.error("Error loading Telegram user data:", e);
+                // Keep the default values if not in Telegram or on error
             }
         }
 
