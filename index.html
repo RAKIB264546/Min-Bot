@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Telegram Mini App</title>
+    <!-- টেলিগ্রাম মিনি অ্যাপের জন্য প্রয়োজনীয় স্ক্রিপ্ট -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* বেসিক স্টাইল এবং ডার্ক থিম */
+        :root {
+            --bg-color: #18222d;
+            --secondary-bg-color: #202b36;
+            --text-color: #ffffff;
+            --hint-color: #aaaaaa;
+            --accent-color: #52a0e2;
+            --button-color: #2a3641;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* লোডিং স্পিনার */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-color);
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-left-color: var(--accent-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* প্রধান অ্যাপ কন্টেন্ট */
+        #app-content {
+            visibility: hidden; /* প্রাথমিকভাবে লুকানো থাকবে */
+            opacity: 0;
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        #app-content.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* প্রোফাইল সেকশন */
+        .profile-section {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: var(--secondary-bg-color);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .profile-picture {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-color);
+        }
+        .profile-info {
+            margin-left: 15px;
+        }
+        .profile-name {
+            display: flex;
+            align-items: center;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        .verified-tick {
+            width: 20px;
+            height: 20px;
+            margin-left: 8px;
+            color: var(--accent-color);
+        }
+        .user-id {
+            font-size: 0.9em;
+            color: var(--hint-color);
+        }
+        
+        .main-view {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .main-view h2 { margin-top: 0; }
+
+        /* নিচের নেভিগেশন বার */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--secondary-bg-color);
+            padding: 10px 0;
+            border-top: 1px solid var(--button-color);
+            padding-bottom: env(safe-area-inset-bottom, 10px); /* For iPhone X notch */
+        }
+        .nav-button {
+            background: none; border: none; color: var(--hint-color);
+            display: flex; flex-direction: column; align-items: center;
+            font-size: 12px; cursor: pointer; transition: color 0.2s;
+        }
+        .nav-button.active { color: var(--accent-color); }
+        .nav-button svg { width: 24px; height: 24px; margin-bottom: 4px; }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="app-content">
+        <div class="profile-section">
+            <img id="user-photo" class="profile-picture" src="" alt="Profile Picture">
+            <div class="profile-info">
+                <div class="profile-name">
+                    <span id="user-name"></span>
+                    <svg class="verified-tick" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.03 15.41l-3.54-3.54c-.39-.39-.39-1.02 0-1.41l.71-.71c.39-.39 1.02-.39 1.41 0L10 12.59l4.94-4.95c.39-.39 1.02-.39 1.41 0l.71.71c.39.39.39 1.02 0 1.41l-6.06 6.06c-.39.39-1.02.39-1.41 0z"/>
+                    </svg>
+                </div>
+                <div id="user-id" class="user-id"></div>
+            </div>
+        </div>
+        
+        <div class="main-view">
+            <h2 id="page-title">Home</h2>
+            <p>Welcome to your Mini App!</p>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <button class="nav-button active" onclick="showPage('Home', this)">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
+            <span>Home</span>
+        </button>
+        <button class="nav-button" onclick="showPage('Watch Ad', this)">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            <span>Watch Ad</span>
+        </button>
+        <button class="nav-button" onclick="showPage('Earn', this)">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-11h2v2h-2v-2zm0 4h2v4h-2v-4z"/></svg>
+            <span>Earn</span>
+        </button>
+        <button class="nav-button" onclick="showPage('Withdraw', this)">
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 8H3V6h18v2zm-2 10H5v-7h14v7zm2-9H3v9c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9z"/></svg>
+            <span>Withdraw</span>
+        </button>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tg = window.Telegram.WebApp;
+            tg.expand();
+            tg.ready();
+
+            setTimeout(() => {
+                try {
+                    const user = tg.initDataUnsafe.user;
+                    if (user && user.id) {
+                        const userPhoto = document.getElementById('user-photo');
+                        if (user.photo_url) {
+                            userPhoto.src = user.photo_url;
+                        } else {
+                            userPhoto.style.display = 'none';
+                        }
+                        document.getElementById('user-name').innerText = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+                        document.getElementById('user-id').innerText = `@${user.username || 'user' + user.id}`;
+                    } else {
+                        document.querySelector('.profile-section').innerHTML = '<p style="text-align:center; width:100%;">Could not load user data. Please open this app via Telegram.</p>';
+                    }
+                } catch (e) {
+                     document.querySelector('.profile-section').innerHTML = '<p style="text-align:center; width:100%;">Error loading data. Please try again.</p>';
+                } finally {
+                    document.getElementById('loader').style.opacity = '0';
+                    document.querySelector('#app-content').classList.add('visible');
+                    setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
+                }
+            }, 1500);
+        });
+
+        function showPage(pageName, element) {
+            document.getElementById('page-title').innerText = pageName;
+            
+            document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            
+            // এখানে আপনি বিভিন্ন পেজের কন্টেন্ট লোড করার জন্য কোড লিখতে পারেন।
+            // যেমন: if (pageName === 'Earn') { ... }
+        }
+    </script>
+</body>
+</html>
