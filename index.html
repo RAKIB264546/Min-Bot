@@ -26,16 +26,27 @@
             border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .page { display: none; flex: 1; overflow-y: auto; }
-        .page.active { display: block; }
+        
+        /* Layout and Scrolling Fix */
         #app-content {
-            visibility: hidden; opacity: 0; flex: 1; padding: 20px;
-            overflow-y: auto; transition: opacity 0.5s, visibility 0.5s; display: flex; flex-direction: column;
+            visibility: hidden; opacity: 0; flex-grow: 1;
+            padding: 20px 20px 0 20px; /* Bottom padding removed, will be on the page container */
+            transition: opacity 0.5s, visibility 0.5s; display: flex; flex-direction: column;
+            overflow: hidden; /* Prevent this level from scrolling */
         }
         #app-content.visible { visibility: visible; opacity: 1; }
+        #pages-container {
+            flex-grow: 1; /* This container will fill the remaining space */
+            overflow-y: auto; /* This container will handle scrolling */
+            padding-bottom: 80px; /* Space for the bottom nav bar */
+        }
+        .page { display: none; }
+        .page.active { display: block; }
+        
         .profile-section {
             display: flex; align-items: center; padding: 10px;
             background-color: var(--secondary-bg-color); border-radius: 12px; margin-bottom: 20px;
+            flex-shrink: 0; /* Prevent profile section from shrinking */
         }
         .profile-picture { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-color); }
         .profile-info { margin-left: 15px; flex-grow: 1; }
@@ -43,13 +54,16 @@
         .verified-tick { width: 18px; height: 18px; margin-left: 8px; color: var(--accent-color); }
         .balance-section { text-align: right; }
         .balance-text { font-size: 1.2em; font-weight: bold; }
+
         .main-view { text-align: center; padding: 40px 0; }
         .main-view h2 { margin-top: 0; }
+
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0; display: flex;
             justify-content: space-around; background-color: var(--secondary-bg-color);
             padding: 10px 0; border-top: 1px solid var(--button-color);
             padding-bottom: env(safe-area-inset-bottom, 10px);
+            flex-shrink: 0; z-index: 100;
         }
         .nav-button {
             background: none; border: none; color: var(--hint-color); display: flex;
@@ -58,7 +72,7 @@
         }
         .nav-button.active { color: var(--accent-color); }
         .nav-button svg { width: 24px; height: 24px; margin-bottom: 4px; }
-        /* Daily Task Styles */
+        
         .task-list { padding: 0; margin: 0; list-style: none; }
         .task-item {
             background-color: var(--secondary-bg-color); border-radius: 10px;
@@ -72,7 +86,7 @@
         .join-btn { background-color: var(--accent-color); color: white; }
         .verify-btn { background-color: var(--button-color); color: var(--text-color); }
         .verify-btn:disabled { background-color: var(--success-color); color: white; opacity: 0.7; cursor: not-allowed; }
-        /* Notification Toast */
+        
         #notification {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             padding: 12px 20px; border-radius: 8px; color: white; font-weight: 500;
@@ -102,23 +116,19 @@
             </div>
         </div>
 
-        <!-- Pages Container -->
-        <div id="home-page" class="page active">
-            <div class="main-view"><h2>Home</h2><p>Welcome to your Mini App!</p></div>
-        </div>
-
-        <div id="daily-tasks-page" class="page">
-            <h2>Daily Tasks</h2>
-            <ul id="task-list" class="task-list"></ul>
-            <div id="all-tasks-done" class="main-view" style="display: none;">
-                <h3>Well Done!</h3>
-                <p>You have completed all tasks for today. Come back tomorrow!</p>
+        <!-- Pages Container for Scrolling -->
+        <div id="pages-container">
+            <div id="home-page" class="page active"><div class="main-view"><h2>Home</h2><p>Welcome!</p></div></div>
+            <div id="daily-tasks-page" class="page">
+                <h2>Daily Tasks</h2>
+                <ul id="task-list" class="task-list"></ul>
+                <div id="all-tasks-done" class="main-view" style="display: none;">
+                    <h3>Well Done!</h3><p>You have completed all tasks for today.</p>
+                </div>
             </div>
+            <div id="earn-page" class="page"><div class="main-view"><h2>Earn</h2></div></div>
+            <div id="withdraw-page" class="page"><div class="main-view"><h2>Withdraw</h2></div></div>
         </div>
-        
-        <div id="watch-ad-page" class="page"><div class="main-view"><h2>Watch Ad</h2></div></div>
-        <div id="earn-page" class="page"><div class="main-view"><h2>Earn</h2></div></div>
-        <div id="withdraw-page" class="page"><div class="main-view"><h2>Withdraw</h2></div></div>
     </div>
 
     <!-- Bottom Navigation -->
@@ -130,7 +140,6 @@
     </nav>
 
     <script>
-        // --- অ্যাপের ডেটা ---
         const tasks = [
             { id: 1, name: "Join Channel 1", url: "https://t.me/realprofithouse_pc_user", reward: 100 },
             { id: 2, name: "Join Channel 2", url: "https://t.me/realprofithouse_pc_user", reward: 100 },
@@ -140,26 +149,19 @@
         ];
         let balance = 0;
         let completedTasks = [];
+        let joinClicked = {}; // NEW: State to track join clicks for each task
         const tg = window.Telegram.WebApp;
 
-        // --- অ্যাপ চালু হলে যা যা হবে ---
         document.addEventListener('DOMContentLoaded', function() {
-            tg.expand();
-            tg.ready();
-
+            tg.expand(); tg.ready();
             setTimeout(() => {
-                loadUserData();
-                loadProgress();
-                renderTasks();
-                updateBalanceDisplay();
-
+                loadUserData(); loadProgress(); renderTasks(); updateBalanceDisplay();
                 document.getElementById('loader').style.opacity = '0';
                 document.getElementById('app-content').classList.add('visible');
                 setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
             }, 1500);
         });
 
-        // --- ব্যবহারকারীর তথ্য লোড ---
         function loadUserData() {
             try {
                 const user = tg.initDataUnsafe.user;
@@ -167,15 +169,10 @@
                     const userPhoto = document.getElementById('user-photo');
                     if (user.photo_url) { userPhoto.src = user.photo_url; } else { userPhoto.style.display = 'none'; }
                     document.getElementById('user-name').innerText = `${user.first_name || ''} ${user.last_name || ''}`.trim();
-                } else {
-                    document.querySelector('.profile-section').innerHTML = '<p style="text-align:center; width:100%;">Please open via Telegram.</p>';
-                }
-            } catch (e) {
-                document.querySelector('.profile-section').innerHTML = '<p style="text-align:center; width:100%;">Error loading data.</p>';
-            }
+                } else { document.querySelector('.profile-section').innerHTML = '<p style="text-align:center; width:100%;">Please open via Telegram.</p>'; }
+            } catch (e) { document.querySelector('.profile-section').innerHTML = '<p style="text-align:center; width:100%;">Error loading data.</p>'; }
         }
         
-        // --- টাস্ক লিস্ট দেখানো ---
         function renderTasks() {
             const taskList = document.getElementById('task-list');
             taskList.innerHTML = '';
@@ -191,62 +188,61 @@
 
             tasks.forEach(task => {
                 const isCompleted = completedTasks.includes(task.id);
+                if (isCompleted) return; // Don't render completed tasks anymore
+
                 const li = document.createElement('li');
                 li.className = 'task-item';
+                li.id = `task-item-${task.id}`;
                 li.innerHTML = `
                     <span class="task-info">${task.name} (+${task.reward})</span>
                     <div class="task-actions">
-                        <button class="join-btn" onclick="joinChannel('${task.url}')">Join</button>
-                        <button id="verify-btn-${task.id}" class="verify-btn" onclick="verifyTask(${task.id})" ${isCompleted ? 'disabled' : ''}>
-                            ${isCompleted ? 'Completed' : 'Verify'}
-                        </button>
+                        <button class="join-btn" onclick="joinChannel('${task.url}', ${task.id})">Join</button>
+                        <button id="verify-btn-${task.id}" class="verify-btn" onclick="verifyTask(${task.id})">Verify</button>
                     </div>
                 `;
                 taskList.appendChild(li);
             });
         }
 
-        // --- চ্যানেলে জয়েন ---
-        function joinChannel(url) {
+        function joinChannel(url, taskId) {
+            joinClicked[taskId] = true; // Mark that join has been clicked for this task
             tg.openTelegramLink(url);
         }
 
-        // --- টাস্ক ভেরিফাই (সিমুলেশন) ---
         function verifyTask(taskId) {
+            // Check if 'Join' was clicked for this task
+            if (!joinClicked[taskId]) {
+                showNotification('আপনি এখনো জয়েন করেননি! প্রথমে জয়েন করুন।', 'error');
+                return;
+            }
+
             const verifyButton = document.getElementById(`verify-btn-${taskId}`);
             verifyButton.disabled = true;
             verifyButton.innerText = 'Verifying...';
-
-            // এখানে আসল ভেরিফিকেশন হবে না, আমরা একটি সিমুলেশন করছি
-            // আমরা ধরে নিচ্ছি ব্যবহারকারী জয়েন করেছে
+            
+            // Simulating verification after a delay
             setTimeout(() => {
-                // এখানে আপনি চাইলে সার্ভার থেকে চেক করতে পারেন
-                // যেহেতু সার্ভার নেই, আমরা এটাকে সফল হিসেবেই ধরে নেব
-                const isJoined = true; // এটাকে false করে পরীক্ষা করতে পারেন
+                const task = tasks.find(t => t.id === taskId);
+                balance += task.reward;
+                completedTasks.push(taskId);
+
+                saveProgress();
+                updateBalanceDisplay();
                 
-                if (isJoined) {
-                    const task = tasks.find(t => t.id === taskId);
-                    balance += task.reward;
-                    completedTasks.push(taskId);
+                showNotification(`Balance Added: ${task.reward}`, 'success');
 
-                    saveProgress();
-                    updateBalanceDisplay();
-                    
-                    verifyButton.innerText = 'Completed';
-                    showNotification(`Balance Added: ${task.reward}`, 'success');
-
-                    if (completedTasks.length === tasks.length) {
-                        renderTasks(); // সব টাস্ক শেষ হলে 메시জ দেখানোর জন্য
-                    }
-                } else {
-                    showNotification('You have not joined the channel yet!', 'error');
-                    verifyButton.disabled = false;
-                    verifyButton.innerText = 'Verify';
+                // Remove the completed task from the list
+                const taskItem = document.getElementById(`task-item-${taskId}`);
+                if(taskItem) {
+                    taskItem.remove();
                 }
-            }, 2000); // ২ সেকেন্ডের একটি ভেরিফিকেশন ডিলে
+
+                if (tasks.every(t => completedTasks.includes(t.id))) {
+                    renderTasks(); // Show "All tasks done" message
+                }
+            }, 2000);
         }
 
-        // --- নেভিগেশন ও পেজ পরিবর্তন ---
         function showPage(pageId, element) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
@@ -255,10 +251,7 @@
             element.classList.add('active');
         }
         
-        // --- ব্যালেন্স ও ডেটা সংরক্ষণ ---
-        function updateBalanceDisplay() {
-            document.getElementById('balance').innerText = balance;
-        }
+        function updateBalanceDisplay() { document.getElementById('balance').innerText = balance; }
 
         function saveProgress() {
             localStorage.setItem('userBalance', balance);
@@ -268,23 +261,19 @@
         function loadProgress() {
             const savedBalance = localStorage.getItem('userBalance');
             const savedTasks = localStorage.getItem('completedTasks');
-            if (savedBalance) {
-                balance = parseInt(savedBalance, 10);
-            }
-            if (savedTasks) {
-                completedTasks = JSON.parse(savedTasks);
-            }
+            if (savedBalance) { balance = parseInt(savedBalance, 10); }
+            if (savedTasks) { completedTasks = JSON.parse(savedTasks); }
+            // Reset daily tasks (example: if you want tasks to reset every day)
+            // For a real app, you would check the date here.
+            // For now, it remembers completed tasks forever.
         }
 
-        // --- নোটিফিকেশন দেখানো ---
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             notification.innerText = message;
-            notification.className = type; // success or error
+            notification.className = type;
             notification.classList.add('show');
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000); // ৩ সেকেন্ড পর নোটিফিকেশন চলে যাবে
+            setTimeout(() => { notification.classList.remove('show'); }, 3000);
         }
     </script>
 </body>
