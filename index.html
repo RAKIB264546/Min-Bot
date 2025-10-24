@@ -4,219 +4,287 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Telegram Mini App</title>
-    <!-- টেলিগ্রাম মিনি অ্যাপের জন্য প্রয়োজনীয় স্ক্রিপ্ট -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* বেসিক স্টাইল এবং ডার্ক থিম */
         :root {
-            --bg-color: #18222d;
-            --secondary-bg-color: #202b36;
-            --text-color: #ffffff;
-            --hint-color: #aaaaaa;
-            --accent-color: #52a0e2;
-            --button-color: #2a3641;
+            --bg-color: #18222d; --secondary-bg-color: #202b36; --text-color: #ffffff;
+            --hint-color: #aaaaaa; --accent-color: #52a0e2; --button-color: #2a3641;
+            --success-color: #28a745; --error-color: #dc3545;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
+            margin: 0; padding: 0; color: var(--text-color); background-color: var(--bg-color);
+            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
         }
-
-        /* লোডিং স্পিনার */
         #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: var(--bg-color);
-            z-index: 1000;
-            transition: opacity 0.5s;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            background-color: var(--bg-color); z-index: 1000; transition: opacity 0.5s;
         }
         .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-left-color: var(--accent-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+            border: 4px solid rgba(255, 255, 255, 0.2); border-left-color: var(--accent-color);
+            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* প্রধান অ্যাপ কন্টেন্ট */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .page { display: none; flex: 1; overflow-y: auto; }
+        .page.active { display: block; }
         #app-content {
-            visibility: hidden; /* প্রাথমিকভাবে লুকানো থাকবে */
-            opacity: 0;
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            transition: opacity 0.5s, visibility 0.5s;
+            visibility: hidden; opacity: 0; flex: 1; padding: 20px;
+            overflow-y: auto; transition: opacity 0.5s, visibility 0.5s; display: flex; flex-direction: column;
         }
-        #app-content.visible {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* প্রোফাইল সেকশন */
+        #app-content.visible { visibility: visible; opacity: 1; }
         .profile-section {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background-color: var(--secondary-bg-color);
-            border-radius: 12px;
-            margin-bottom: 20px;
+            display: flex; align-items: center; padding: 10px;
+            background-color: var(--secondary-bg-color); border-radius: 12px; margin-bottom: 20px;
         }
-        .profile-picture {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--accent-color);
-        }
-        .profile-info {
-            margin-left: 15px;
-        }
-        .profile-name {
-            display: flex;
-            align-items: center;
-            font-size: 1.2em;
-            font-weight: 600;
-        }
-        .verified-tick {
-            width: 20px;
-            height: 20px;
-            margin-left: 8px;
-            color: var(--accent-color);
-        }
-        .user-id {
-            font-size: 0.9em;
-            color: var(--hint-color);
-        }
-        
-        .main-view {
-            text-align: center;
-            padding: 40px 0;
-        }
+        .profile-picture { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-color); }
+        .profile-info { margin-left: 15px; flex-grow: 1; }
+        .profile-name { display: flex; align-items: center; font-size: 1.1em; font-weight: 600; }
+        .verified-tick { width: 18px; height: 18px; margin-left: 8px; color: var(--accent-color); }
+        .balance-section { text-align: right; }
+        .balance-text { font-size: 1.2em; font-weight: bold; }
+        .main-view { text-align: center; padding: 40px 0; }
         .main-view h2 { margin-top: 0; }
-
-        /* নিচের নেভিগেশন বার */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-around;
-            background-color: var(--secondary-bg-color);
-            padding: 10px 0;
-            border-top: 1px solid var(--button-color);
-            padding-bottom: env(safe-area-inset-bottom, 10px); /* For iPhone X notch */
+            position: fixed; bottom: 0; left: 0; right: 0; display: flex;
+            justify-content: space-around; background-color: var(--secondary-bg-color);
+            padding: 10px 0; border-top: 1px solid var(--button-color);
+            padding-bottom: env(safe-area-inset-bottom, 10px);
         }
         .nav-button {
-            background: none; border: none; color: var(--hint-color);
-            display: flex; flex-direction: column; align-items: center;
-            font-size: 12px; cursor: pointer; transition: color 0.2s;
+            background: none; border: none; color: var(--hint-color); display: flex;
+            flex-direction: column; align-items: center; font-size: 12px;
+            cursor: pointer; transition: color 0.2s; width: 20%;
         }
         .nav-button.active { color: var(--accent-color); }
         .nav-button svg { width: 24px; height: 24px; margin-bottom: 4px; }
+        /* Daily Task Styles */
+        .task-list { padding: 0; margin: 0; list-style: none; }
+        .task-item {
+            background-color: var(--secondary-bg-color); border-radius: 10px;
+            padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .task-info { font-weight: 500; }
+        .task-actions button {
+            padding: 8px 12px; border: none; border-radius: 6px;
+            font-weight: bold; cursor: pointer; margin-left: 10px;
+        }
+        .join-btn { background-color: var(--accent-color); color: white; }
+        .verify-btn { background-color: var(--button-color); color: var(--text-color); }
+        .verify-btn:disabled { background-color: var(--success-color); color: white; opacity: 0.7; cursor: not-allowed; }
+        /* Notification Toast */
+        #notification {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 12px 20px; border-radius: 8px; color: white; font-weight: 500;
+            z-index: 2000; visibility: hidden; opacity: 0; transition: all 0.3s;
+        }
+        #notification.show { visibility: visible; opacity: 1; }
+        #notification.success { background-color: var(--success-color); }
+        #notification.error { background-color: var(--error-color); }
     </style>
 </head>
 <body>
-
-    <div id="loader">
-        <div class="spinner"></div>
-    </div>
+    <div id="loader"><div class="spinner"></div></div>
+    <div id="notification"></div>
 
     <div id="app-content">
+        <!-- Profile Section with Balance -->
         <div class="profile-section">
-            <img id="user-photo" class="profile-picture" src="" alt="Profile Picture">
+            <img id="user-photo" class="profile-picture" alt="DP">
             <div class="profile-info">
                 <div class="profile-name">
                     <span id="user-name"></span>
-                    <svg class="verified-tick" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.03 15.41l-3.54-3.54c-.39-.39-.39-1.02 0-1.41l.71-.71c.39-.39 1.02-.39 1.41 0L10 12.59l4.94-4.95c.39-.39 1.02-.39 1.41 0l.71.71c.39.39.39 1.02 0 1.41l-6.06 6.06c-.39.39-1.02.39-1.41 0z"/>
-                    </svg>
+                    <svg class="verified-tick" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.03 15.41l-3.54-3.54c-.39-.39-.39-1.02 0-1.41l.71-.71c.39-.39 1.02-.39 1.41 0L10 12.59l4.94-4.95c.39-.39 1.02-.39 1.41 0l.71.71c.39.39.39 1.02 0 1.41l-6.06 6.06c-.39.39-1.02.39-1.41 0z"/></svg>
                 </div>
-                <div id="user-id" class="user-id"></div>
+                <div class="balance-section">
+                    <span class="balance-text">Balance: <span id="balance">0</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pages Container -->
+        <div id="home-page" class="page active">
+            <div class="main-view"><h2>Home</h2><p>Welcome to your Mini App!</p></div>
+        </div>
+
+        <div id="daily-tasks-page" class="page">
+            <h2>Daily Tasks</h2>
+            <ul id="task-list" class="task-list"></ul>
+            <div id="all-tasks-done" class="main-view" style="display: none;">
+                <h3>Well Done!</h3>
+                <p>You have completed all tasks for today. Come back tomorrow!</p>
             </div>
         </div>
         
-        <div class="main-view">
-            <h2 id="page-title">Home</h2>
-            <p>Welcome to your Mini App!</p>
-        </div>
+        <div id="watch-ad-page" class="page"><div class="main-view"><h2>Watch Ad</h2></div></div>
+        <div id="earn-page" class="page"><div class="main-view"><h2>Earn</h2></div></div>
+        <div id="withdraw-page" class="page"><div class="main-view"><h2>Withdraw</h2></div></div>
     </div>
 
+    <!-- Bottom Navigation -->
     <nav class="bottom-nav">
-        <button class="nav-button active" onclick="showPage('Home', this)">
-            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
-            <span>Home</span>
-        </button>
-        <button class="nav-button" onclick="showPage('Watch Ad', this)">
-            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-            <span>Watch Ad</span>
-        </button>
-        <button class="nav-button" onclick="showPage('Earn', this)">
-            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-11h2v2h-2v-2zm0 4h2v4h-2v-4z"/></svg>
-            <span>Earn</span>
-        </button>
-        <button class="nav-button" onclick="showPage('Withdraw', this)">
-            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 8H3V6h18v2zm-2 10H5v-7h14v7zm2-9H3v9c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9z"/></svg>
-            <span>Withdraw</span>
-        </button>
+        <button class="nav-button active" onclick="showPage('home-page', this)"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg><span>Home</span></button>
+        <button class="nav-button" onclick="showPage('daily-tasks-page', this)"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M16.5 12c1.38 0 2.5-1.12 2.5-2.5S17.88 7 16.5 7s-2.5 1.12-2.5 2.5 1.12 2.5 2.5 2.5zM9 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V18h11v-1.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V18h7v-1.5c0-.9.6-1.62 1.46-2.12C9.88 13.54 9.46 13 9 13z"/></svg><span>Daily Tasks</span></button>
+        <button class="nav-button" onclick="showPage('earn-page', this)"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-11h2v2h-2v-2zm0 4h2v4h-2v-4z"/></svg><span>Earn</span></button>
+        <button class="nav-button" onclick="showPage('withdraw-page', this)"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M21 8H3V6h18v2zm-2 10H5v-7h14v7zm2-9H3v9c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-9z"/></svg><span>Withdraw</span></button>
     </nav>
 
     <script>
+        // --- অ্যাপের ডেটা ---
+        const tasks = [
+            { id: 1, name: "Join Channel 1", url: "https://t.me/realprofithouse_pc_user", reward: 100 },
+            { id: 2, name: "Join Channel 2", url: "https://t.me/realprofithouse_pc_user", reward: 100 },
+            { id: 3, name: "Join Channel 3", url: "https://t.me/realprofithouse_pc_user", reward: 100 },
+            { id: 4, name: "Join Channel 4", url: "https://t.me/realprofithouse_pc_user", reward: 100 },
+            { id: 5, name: "Join Channel 5", url: "https://t.me/realprofithouse_pc_user", reward: 100 },
+        ];
+        let balance = 0;
+        let completedTasks = [];
+        const tg = window.Telegram.WebApp;
+
+        // --- অ্যাপ চালু হলে যা যা হবে ---
         document.addEventListener('DOMContentLoaded', function() {
-            const tg = window.Telegram.WebApp;
             tg.expand();
             tg.ready();
 
             setTimeout(() => {
-                try {
-                    const user = tg.initDataUnsafe.user;
-                    if (user && user.id) {
-                        const userPhoto = document.getElementById('user-photo');
-                        if (user.photo_url) {
-                            userPhoto.src = user.photo_url;
-                        } else {
-                            userPhoto.style.display = 'none';
-                        }
-                        document.getElementById('user-name').innerText = `${user.first_name || ''} ${user.last_name || ''}`.trim();
-                        document.getElementById('user-id').innerText = `@${user.username || 'user' + user.id}`;
-                    } else {
-                        document.querySelector('.profile-section').innerHTML = '<p style="text-align:center; width:100%;">Could not load user data. Please open this app via Telegram.</p>';
-                    }
-                } catch (e) {
-                     document.querySelector('.profile-section').innerHTML = '<p style="text-align:center; width:100%;">Error loading data. Please try again.</p>';
-                } finally {
-                    document.getElementById('loader').style.opacity = '0';
-                    document.querySelector('#app-content').classList.add('visible');
-                    setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
-                }
+                loadUserData();
+                loadProgress();
+                renderTasks();
+                updateBalanceDisplay();
+
+                document.getElementById('loader').style.opacity = '0';
+                document.getElementById('app-content').classList.add('visible');
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
             }, 1500);
         });
 
-        function showPage(pageName, element) {
-            document.getElementById('page-title').innerText = pageName;
+        // --- ব্যবহারকারীর তথ্য লোড ---
+        function loadUserData() {
+            try {
+                const user = tg.initDataUnsafe.user;
+                if (user && user.id) {
+                    const userPhoto = document.getElementById('user-photo');
+                    if (user.photo_url) { userPhoto.src = user.photo_url; } else { userPhoto.style.display = 'none'; }
+                    document.getElementById('user-name').innerText = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+                } else {
+                    document.querySelector('.profile-section').innerHTML = '<p style="text-align:center; width:100%;">Please open via Telegram.</p>';
+                }
+            } catch (e) {
+                document.querySelector('.profile-section').innerHTML = '<p style="text-align:center; width:100%;">Error loading data.</p>';
+            }
+        }
+        
+        // --- টাস্ক লিস্ট দেখানো ---
+        function renderTasks() {
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = '';
+            
+            if (completedTasks.length === tasks.length) {
+                document.getElementById('task-list').style.display = 'none';
+                document.getElementById('all-tasks-done').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('task-list').style.display = 'block';
+                document.getElementById('all-tasks-done').style.display = 'none';
+            }
+
+            tasks.forEach(task => {
+                const isCompleted = completedTasks.includes(task.id);
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                li.innerHTML = `
+                    <span class="task-info">${task.name} (+${task.reward})</span>
+                    <div class="task-actions">
+                        <button class="join-btn" onclick="joinChannel('${task.url}')">Join</button>
+                        <button id="verify-btn-${task.id}" class="verify-btn" onclick="verifyTask(${task.id})" ${isCompleted ? 'disabled' : ''}>
+                            ${isCompleted ? 'Completed' : 'Verify'}
+                        </button>
+                    </div>
+                `;
+                taskList.appendChild(li);
+            });
+        }
+
+        // --- চ্যানেলে জয়েন ---
+        function joinChannel(url) {
+            tg.openTelegramLink(url);
+        }
+
+        // --- টাস্ক ভেরিফাই (সিমুলেশন) ---
+        function verifyTask(taskId) {
+            const verifyButton = document.getElementById(`verify-btn-${taskId}`);
+            verifyButton.disabled = true;
+            verifyButton.innerText = 'Verifying...';
+
+            // এখানে আসল ভেরিফিকেশন হবে না, আমরা একটি সিমুলেশন করছি
+            // আমরা ধরে নিচ্ছি ব্যবহারকারী জয়েন করেছে
+            setTimeout(() => {
+                // এখানে আপনি চাইলে সার্ভার থেকে চেক করতে পারেন
+                // যেহেতু সার্ভার নেই, আমরা এটাকে সফল হিসেবেই ধরে নেব
+                const isJoined = true; // এটাকে false করে পরীক্ষা করতে পারেন
+                
+                if (isJoined) {
+                    const task = tasks.find(t => t.id === taskId);
+                    balance += task.reward;
+                    completedTasks.push(taskId);
+
+                    saveProgress();
+                    updateBalanceDisplay();
+                    
+                    verifyButton.innerText = 'Completed';
+                    showNotification(`Balance Added: ${task.reward}`, 'success');
+
+                    if (completedTasks.length === tasks.length) {
+                        renderTasks(); // সব টাস্ক শেষ হলে 메시জ দেখানোর জন্য
+                    }
+                } else {
+                    showNotification('You have not joined the channel yet!', 'error');
+                    verifyButton.disabled = false;
+                    verifyButton.innerText = 'Verify';
+                }
+            }, 2000); // ২ সেকেন্ডের একটি ভেরিফিকেশন ডিলে
+        }
+
+        // --- নেভিগেশন ও পেজ পরিবর্তন ---
+        function showPage(pageId, element) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
             
             document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
-            
-            // এখানে আপনি বিভিন্ন পেজের কন্টেন্ট লোড করার জন্য কোড লিখতে পারেন।
-            // যেমন: if (pageName === 'Earn') { ... }
+        }
+        
+        // --- ব্যালেন্স ও ডেটা সংরক্ষণ ---
+        function updateBalanceDisplay() {
+            document.getElementById('balance').innerText = balance;
+        }
+
+        function saveProgress() {
+            localStorage.setItem('userBalance', balance);
+            localStorage.setItem('completedTasks', JSON.stringify(completedTasks));
+        }
+
+        function loadProgress() {
+            const savedBalance = localStorage.getItem('userBalance');
+            const savedTasks = localStorage.getItem('completedTasks');
+            if (savedBalance) {
+                balance = parseInt(savedBalance, 10);
+            }
+            if (savedTasks) {
+                completedTasks = JSON.parse(savedTasks);
+            }
+        }
+
+        // --- নোটিফিকেশন দেখানো ---
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.innerText = message;
+            notification.className = type; // success or error
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000); // ৩ সেকেন্ড পর নোটিফিকেশন চলে যাবে
         }
     </script>
 </body>
