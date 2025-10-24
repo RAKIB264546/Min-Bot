@@ -27,17 +27,18 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
+        /* Layout and Scrolling Fix */
         #app-content {
             visibility: hidden; opacity: 0; flex-grow: 1;
-            padding: 20px 20px 0 20px;
+            padding: 20px 20px 0 20px; /* Bottom padding removed, will be on the page container */
             transition: opacity 0.5s, visibility 0.5s; display: flex; flex-direction: column;
-            overflow: hidden;
+            overflow: hidden; /* Prevent this level from scrolling */
         }
         #app-content.visible { visibility: visible; opacity: 1; }
         #pages-container {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-bottom: 80px;
+            flex-grow: 1; /* This container will fill the remaining space */
+            overflow-y: auto; /* This container will handle scrolling */
+            padding-bottom: 80px; /* Space for the bottom nav bar */
         }
         .page { display: none; }
         .page.active { display: block; }
@@ -45,7 +46,7 @@
         .profile-section {
             display: flex; align-items: center; padding: 10px;
             background-color: var(--secondary-bg-color); border-radius: 12px; margin-bottom: 20px;
-            flex-shrink: 0;
+            flex-shrink: 0; /* Prevent profile section from shrinking */
         }
         .profile-picture { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-color); }
         .profile-info { margin-left: 15px; flex-grow: 1; }
@@ -148,7 +149,7 @@
         ];
         let balance = 0;
         let completedTasks = [];
-        let joinClicked = {};
+        let joinClicked = {}; // NEW: State to track join clicks for each task
         const tg = window.Telegram.WebApp;
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -176,9 +177,7 @@
             const taskList = document.getElementById('task-list');
             taskList.innerHTML = '';
             
-            const remainingTasks = tasks.filter(task => !completedTasks.includes(task.id));
-
-            if (remainingTasks.length === 0) {
+            if (completedTasks.length === tasks.length) {
                 document.getElementById('task-list').style.display = 'none';
                 document.getElementById('all-tasks-done').style.display = 'block';
                 return;
@@ -187,7 +186,10 @@
                 document.getElementById('all-tasks-done').style.display = 'none';
             }
 
-            remainingTasks.forEach(task => {
+            tasks.forEach(task => {
+                const isCompleted = completedTasks.includes(task.id);
+                if (isCompleted) return; // Don't render completed tasks anymore
+
                 const li = document.createElement('li');
                 li.className = 'task-item';
                 li.id = `task-item-${task.id}`;
@@ -203,12 +205,12 @@
         }
 
         function joinChannel(url, taskId) {
-            joinClicked[taskId] = true;
-            showNotification('চ্যানেলে জয়েন করে ফিরে আসুন এবং "Verify" ক্লিক করুন।', 'success');
+            joinClicked[taskId] = true; // Mark that join has been clicked for this task
             tg.openTelegramLink(url);
         }
 
-        async function verifyTask(taskId) {
+        function verifyTask(taskId) {
+            // Check if 'Join' was clicked for this task
             if (!joinClicked[taskId]) {
                 showNotification('আপনি এখনো জয়েন করেননি! প্রথমে জয়েন করুন।', 'error');
                 return;
@@ -218,66 +220,27 @@
             verifyButton.disabled = true;
             verifyButton.innerText = 'Verifying...';
             
-            try {
-                // ****** ব্যাক-এন্ড ইন্টিগ্রেশন শুরু ******
-                // এখানে আপনার সার্ভারের URL দিতে হবে। এটি একটি উদাহরণ।
-                const backendUrl = 'https://your-bot-backend.com/verifyTask';
+            // Simulating verification after a delay
+            setTimeout(() => {
+                const task = tasks.find(t => t.id === taskId);
+                balance += task.reward;
+                completedTasks.push(taskId);
 
-                // সার্ভারে ব্যবহারকারীর ডেটা এবং টাস্কের তথ্য পাঠানো হচ্ছে
-                const response = await fetch(backendUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        initData: tg.initData, // ব্যবহারকারীকে শনাক্ত করার জন্য
-                        taskId: taskId
-                    }),
-                });
+                saveProgress();
+                updateBalanceDisplay();
+                
+                showNotification(`Balance Added: ${task.reward}`, 'success');
 
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.statusText}`);
+                // Remove the completed task from the list
+                const taskItem = document.getElementById(`task-item-${taskId}`);
+                if(taskItem) {
+                    taskItem.remove();
                 }
 
-                const result = await response.json();
-                // ****** ব্যাক-এন্ড ইন্টিগ্রেশন শেষ ******
-
-                if (result.isMember) {
-                    // যদি ব্যাক-এন্ড জানায় যে ব্যবহারকারী জয়েন করেছে
-                    const task = tasks.find(t => t.id === taskId);
-                    balance += task.reward;
-                    completedTasks.push(taskId);
-
-                    saveProgress();
-                    updateBalanceDisplay();
-                    
-                    showNotification(`সাফল্যের সাথে ${task.reward} ব্যালেন্স যোগ হয়েছে!`, 'success');
-
-                    const taskItem = document.getElementById(`task-item-${taskId}`);
-                    if (taskItem) {
-                        taskItem.style.transition = 'opacity 0.5s, transform 0.5s';
-                        taskItem.style.opacity = '0';
-                        taskItem.style.transform = 'translateX(100%)';
-                        setTimeout(() => {
-                            taskItem.remove();
-                            // সব টাস্ক শেষ হয়েছে কিনা তা পরীক্ষা করুন
-                            if (tasks.every(t => completedTasks.includes(t.id))) {
-                                renderTasks();
-                            }
-                        }, 500);
-                    }
-                } else {
-                    // যদি ব্যাক-এন্ড জানায় যে ব্যবহারকারী জয়েন করেনি
-                    showNotification('আপনি এখনো চ্যানেলে সঠিকভাবে জয়েন করেননি।', 'error');
-                    verifyButton.disabled = false;
-                    verifyButton.innerText = 'Verify';
+                if (tasks.every(t => completedTasks.includes(t.id))) {
+                    renderTasks(); // Show "All tasks done" message
                 }
-
-            } catch (error) {
-                // যদি সার্ভারে কোনো সমস্যা হয়
-                console.error('Verification failed:', error);
-                showNotification('ভেরিফিকেশনে সমস্যা হয়েছে। আবার চেষ্টা করুন।', 'error');
-                verifyButton.disabled = false;
-                verifyButton.innerText = 'Verify';
-            }
+            }, 2000);
         }
 
         function showPage(pageId, element) {
@@ -300,6 +263,9 @@
             const savedTasks = localStorage.getItem('completedTasks');
             if (savedBalance) { balance = parseInt(savedBalance, 10); }
             if (savedTasks) { completedTasks = JSON.parse(savedTasks); }
+            // Reset daily tasks (example: if you want tasks to reset every day)
+            // For a real app, you would check the date here.
+            // For now, it remembers completed tasks forever.
         }
 
         function showNotification(message, type = 'success') {
