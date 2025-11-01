@@ -314,38 +314,103 @@
             100% { transform: scale(1); }
         }
 
-        /* Countdown Timer */
+        /* Professional Countdown Timer */
         .countdown-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 30;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .countdown-container.active {
+            display: flex;
+        }
+
+        .countdown-content {
+            text-align: center;
+            position: relative;
+        }
+
+        .countdown-circle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+
+        .countdown-circle svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: rotate(-90deg);
+        }
+
+        .countdown-circle-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-width: 10;
+        }
+
+        .countdown-circle-progress {
+            fill: none;
+            stroke: var(--warning);
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .countdown-number {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 30;
-            text-align: center;
-            display: none;
-        }
-
-        .countdown-container.active {
-            display: block;
-        }
-
-        .countdown-number {
-            font-size: 8rem;
+            font-size: 5rem;
             font-weight: bold;
             color: var(--warning);
             text-shadow: 0 0 30px rgba(247, 183, 49, 0.8);
-            animation: countdownPulse 1s ease-in-out infinite;
-        }
-
-        @keyframes countdownPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
         }
 
         .countdown-text {
             font-size: 1.5rem;
-            margin-top: -20px;
             color: var(--light);
+            margin-bottom: 30px;
+        }
+
+        /* Crash Result Display */
+        .crash-result {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 0 0 50px rgba(255, 107, 107, 0.8);
+            z-index: 25;
+            display: none;
+            animation: resultAppear 0.5s ease-out;
+        }
+
+        @keyframes resultAppear {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .crash-result.show {
+            display: block;
         }
 
         /* Game Status */
@@ -868,7 +933,16 @@
                 font-size: 2rem;
             }
 
+            .countdown-circle {
+                width: 150px;
+                height: 150px;
+            }
+
             .countdown-number {
+                font-size: 3rem;
+            }
+
+            .crash-result {
                 font-size: 5rem;
             }
         }
@@ -991,10 +1065,21 @@
                         <!-- Multiplier Display -->
                         <div class="multiplier-display" id="multiplierDisplay">1.00x</div>
                         
-                        <!-- Countdown Timer -->
+                        <!-- Crash Result Display -->
+                        <div class="crash-result" id="crashResult">5.20x</div>
+                        
+                        <!-- Professional Countdown Timer -->
                         <div class="countdown-container" id="countdownContainer">
-                            <div class="countdown-number" id="countdownNumber">10</div>
-                            <div class="countdown-text">পরবর্তী রাউন্ড</div>
+                            <div class="countdown-content">
+                                <div class="countdown-circle">
+                                    <svg width="200" height="200">
+                                        <circle class="countdown-circle-bg" cx="100" cy="100" r="90"></circle>
+                                        <circle class="countdown-circle-progress" id="countdownProgress" cx="100" cy="100" r="90"></circle>
+                                    </svg>
+                                    <div class="countdown-number" id="countdownNumber">10</div>
+                                </div>
+                                <div class="countdown-text">পরবর্তী রাউন্ড</div>
+                            </div>
                         </div>
                     </div>
                     
@@ -1260,9 +1345,9 @@
         };
 
         // API Configuration
-        const CHATGPT_API_KEY = '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'; // এখানে আপনার ChatGPT API Key দিন
+        const CHATGPT_API_KEY = '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';
         const TELEGRAM_BOT_TOKEN = '8341497983:AAFjG5N2SQSpY3s_7Q04IJDkTEXewfxewKs';
-        const TELEGRAM_CHAT_ID = '6952815629'; // এখানে আপনার টেলিগ্রাম চ্যাট ID দিন
+        const TELEGRAM_CHAT_ID = '6952815629';
 
         // DOM Elements
         const planeContainer = document.getElementById('planeContainer');
@@ -1278,6 +1363,8 @@
         const axisLabels = document.getElementById('axisLabels');
         const countdownContainer = document.getElementById('countdownContainer');
         const countdownNumber = document.getElementById('countdownNumber');
+        const countdownProgress = document.getElementById('countdownProgress');
+        const crashResult = document.getElementById('crashResult');
         const gameStatus = document.getElementById('gameStatus');
         const apiIndicator = document.getElementById('apiIndicator');
         const apiStatusText = document.getElementById('apiStatusText');
@@ -1325,7 +1412,7 @@
         }
 
         // Sound Effects
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)());
 
         function playSound(frequency, duration, type = 'sine') {
             if (!gameState.soundEnabled) return;
@@ -1489,6 +1576,9 @@
             // Generate crash point using AI
             gameState.crashPoint = await generateCrashPointWithAI();
             
+            // Send round info to Telegram BEFORE the round starts
+            sendRoundInfoToTelegram();
+            
             // Update UI
             gameStatus.textContent = 'খেলা চলছে';
             gameStatus.className = 'status-text flying';
@@ -1499,8 +1589,9 @@
             curvePath.setAttribute('d', '');
             curveFill.setAttribute('d', '');
             
-            // Hide countdown
+            // Hide countdown and crash result
             countdownContainer.classList.remove('active');
+            crashResult.classList.remove('show');
             
             // Enable betting
             enableBetting();
@@ -1679,6 +1770,10 @@
             gameStatus.textContent = 'ক্র্যাশ হয়েছে';
             gameStatus.className = 'status-text crashed';
             
+            // Show crash result
+            crashResult.textContent = gameState.crashPoint.toFixed(2) + 'x';
+            crashResult.classList.add('show');
+            
             addToHistory(gameState.crashPoint);
             
             if (gameState.hasBet && !gameState.hasCashedOut) {
@@ -1686,9 +1781,6 @@
             }
             
             playSound(200, 0.5, 'sawtooth');
-            
-            // Send round info to Telegram
-            sendRoundInfoToTelegram();
             
             // Disable betting
             disableBetting();
@@ -1702,12 +1794,21 @@
             gameState.isCountingDown = true;
             let countdown = 10;
             
+            // Set up the progress circle
+            const circumference = 2 * Math.PI * 90;
+            countdownProgress.style.strokeDasharray = circumference;
+            countdownProgress.style.strokeDashoffset = 0;
+            
             countdownContainer.classList.add('active');
             countdownNumber.textContent = countdown;
             
             gameState.countdownInterval = setInterval(() => {
                 countdown--;
                 countdownNumber.textContent = countdown;
+                
+                // Update progress circle
+                const offset = circumference - (countdown / 10) * circumference;
+                countdownProgress.style.strokeDashoffset = offset;
                 
                 playSound(600, 0.1);
                 
@@ -1733,7 +1834,7 @@
             });
             
             const message = `
-🛩️ SkyAviator - রাউন্ড #${gameState.roundNumber} শেষ
+🛩️ SkyAviator - রাউন্ড #${gameState.roundNumber} শুরু হচ্ছে
 
 📊 ক্র্যাশ পয়েন্ট: ${gameState.crashPoint.toFixed(2)}x
 
@@ -1932,7 +2033,7 @@
             }
             
             // Check API status
-            if (CHATGPT_API_KEY && CHATGPT_API_KEY !== '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') {
+            if (CHATGPT_API_KEY && CHATGPT_API_KEY !== 'YOUR_CHATGPT_API_KEY') {
                 apiIndicator.classList.remove('error');
                 apiStatusText.textContent = 'API সংযুক্ত';
             } else {
