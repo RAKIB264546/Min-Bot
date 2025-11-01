@@ -3,323 +3,956 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ওয়েব ব্যাটেল রয়্যাল</title>
+    <title>Aviator Crash Game - Professional</title>
     <style>
-        body {
-            background-color: #1a1a1a;
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            border-radius: 15px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .main-game {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            min-height: 500px;
+        }
+
+        .game-canvas {
+            position: relative;
+            height: 400px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 15px;
             overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
-        canvas {
-            border: 2px solid #fff;
-            background-color: #3d3d3d;
-            cursor: crosshair;
-        }
-        #info {
+
+        .grid-background {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 18px;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .plane {
+            position: absolute;
+            left: 50px;
+            bottom: 50px;
+            font-size: 40px;
+            transition: all 0.1s linear;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+            z-index: 10;
+        }
+
+        .multiplier-display {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            z-index: 5;
+        }
+
+        .trail {
+            position: absolute;
+            width: 3px;
+            background: linear-gradient(to top, transparent, rgba(255, 255, 255, 0.8));
+            transform-origin: bottom;
+            z-index: 1;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .bet-panel {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .bet-amount {
+            margin-bottom: 15px;
+        }
+
+        .bet-amount label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .bet-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .bet-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .bet-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .quick-bet {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quick-bet-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quick-bet-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .auto-cashout {
+            margin-bottom: 15px;
+        }
+
+        .auto-cashout input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            margin-top: 5px;
+        }
+
+        .bet-button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .bet-button.bet {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .bet-button.bet:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .bet-button.cashout {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .bet-button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .balance-display {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .balance-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .balance-amount {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #4ade80;
+        }
+
+        .history-panel {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .history-title {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .history-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .history-item.low {
+            background: rgba(239, 68, 68, 0.3);
+            border: 1px solid #ef4444;
+        }
+
+        .history-item.medium {
+            background: rgba(251, 191, 36, 0.3);
+            border: 1px solid #fbbf24;
+        }
+
+        .history-item.high {
+            background: rgba(34, 197, 94, 0.3);
+            border: 1px solid #22c55e;
+        }
+
+        .live-bets {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .live-bets-title {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .live-bet-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .player-name {
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+        .bet-amount-display {
+            color: #fbbf24;
+        }
+
+        .cashout-multiplier {
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .crashed {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        .stats-panel {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            animation: slideInRight 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message.success {
+            border-left: 4px solid #4ade80;
+        }
+
+        .message.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .message.info {
+            border-left: 4px solid #60a5fa;
+        }
+
+        @media (max-width: 1024px) {
+            .game-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .multiplier-display {
+                font-size: 3em;
+            }
+        }
+
+        .sound-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1);
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1>✈️ Aviator Crash Game</h1>
+            <p>বাজি ধরুন, উড়ন্ত বিমানটি ক্র্যাশ হওয়ার আগে ক্যাশআউট করুন!</p>
+        </header>
 
-    <div id="info">
-        <div>স্বাস্থ্য: <span id="health">100</span></div>
-        <div>স্কোর: <span id="score">0</span></div>
+        <div class="game-container">
+            <div class="main-game">
+                <div class="game-canvas" id="gameCanvas">
+                    <div class="grid-background"></div>
+                    <div class="plane" id="plane">✈️</div>
+                    <div class="multiplier-display" id="multiplierDisplay">1.00x</div>
+                    <div class="trail" id="trail"></div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="bet-panel">
+                    <div class="balance-display">
+                        <div class="balance-label">আপনার ব্যালেন্স</div>
+                        <div class="balance-amount" id="balance">৳10,000</div>
+                    </div>
+
+                    <div class="bet-amount">
+                        <label>বাজির পরিমাণ</label>
+                        <div class="bet-input-group">
+                            <input type="number" class="bet-input" id="betAmount" value="100" min="10" max="10000">
+                        </div>
+                    </div>
+
+                    <div class="quick-bet">
+                        <button class="quick-bet-btn" onclick="setBetAmount(50)">৳50</button>
+                        <button class="quick-bet-btn" onclick="setBetAmount(100)">৳100</button>
+                        <button class="quick-bet-btn" onclick="setBetAmount(500)">৳500</button>
+                        <button class="quick-bet-btn" onclick="setBetAmount(1000)">৳1000</button>
+                    </div>
+
+                    <div class="auto-cashout">
+                        <label>
+                            <input type="checkbox" id="autoCashoutCheck"> অটো ক্যাশআউট
+                        </label>
+                        <input type="number" id="autoCashoutValue" placeholder="মাল্টিপ্লায়ার (যেমন: 2.00)" min="1.01" max="100" step="0.01">
+                    </div>
+
+                    <button class="bet-button bet" id="betButton" onclick="placeBet()">বাজি ধরুন</button>
+                </div>
+
+                <div class="history-panel">
+                    <div class="history-title">সাম্প্রতিক মাল্টিপ্লায়ার</div>
+                    <div class="history-list" id="historyList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="live-bets">
+            <div class="live-bets-title">🔴 লাইভ বাজি</div>
+            <div id="liveBetsList"></div>
+        </div>
+
+        <div class="stats-panel">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">সর্বোচ্চ মাল্টিপ্লায়ার</div>
+                    <div class="stat-value" id="maxMultiplier">0.00x</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">গড় মাল্টিপ্লায়ার</div>
+                    <div class="stat-value" id="avgMultiplier">0.00x</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">মোট গেম</div>
+                    <div class="stat-value" id="totalGames">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">আপনার মোট জয়</div>
+                    <div class="stat-value" id="totalWins">৳0</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <canvas id="gameCanvas" width="900" height="600"></canvas>
+    <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-
-        // --- গেমের অবস্থা (Game State) ---
-        let gameOver = false;
-        let score = 0;
-
-        // --- প্লেয়ার ---
-        const player = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            width: 30,
-            height: 30,
-            speed: 5,
-            health: 100,
-            color: '#00ff00' // সবুজ রঙ
+        // Game State
+        let gameState = {
+            isPlaying: false,
+            currentMultiplier: 1.00,
+            crashPoint: 0,
+            betAmount: 0,
+            hasBet: false,
+            hasCashedOut: false,
+            balance: 10000,
+            totalWins: 0,
+            soundEnabled: true,
+            history: [],
+            liveBets: [],
+            stats: {
+                maxMultiplier: 0,
+                totalGames: 0,
+                multipliers: []
+            }
         };
 
-        // --- ইনপুট হ্যান্ডলিং (কিবোর্ড ও মাউস) ---
-        const keys = {};
-        let mouseX = 0, mouseY = 0;
+        // DOM Elements
+        const plane = document.getElementById('plane');
+        const multiplierDisplay = document.getElementById('multiplierDisplay');
+        const betButton = document.getElementById('betButton');
+        const betAmountInput = document.getElementById('betAmount');
+        const balanceDisplay = document.getElementById('balance');
+        const historyList = document.getElementById('historyList');
+        const liveBetsList = document.getElementById('liveBetsList');
+        const gameCanvas = document.getElementById('gameCanvas');
+        const trail = document.getElementById('trail');
+        const autoCashoutCheck = document.getElementById('autoCashoutCheck');
+        const autoCashoutValue = document.getElementById('autoCashoutValue');
 
-        document.addEventListener('keydown', (e) => keys[e.key.toLowerCase()] = true);
-        document.addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
-        canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            mouseX = e.clientX - rect.left;
-            mouseY = e.clientY - rect.top;
-        });
+        // Sound Effects (using Web Audio API)
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-        // --- গুলি (Bullets) ---
-        const bullets = [];
-        class Bullet {
-            constructor(x, y, angle) {
-                this.x = x;
-                this.y = y;
-                this.width = 5;
-                this.height = 5;
-                this.speed = 10;
-                this.angle = angle;
-                this.dx = Math.cos(angle) * this.speed;
-                this.dy = Math.sin(angle) * this.speed;
-                this.color = '#ffff00'; // হলুদ রঙ
-            }
-            update() {
-                this.x += this.dx;
-                this.y += this.dy;
-            }
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
-            }
-            isOffScreen() {
-                return this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height;
-            }
+        function playSound(frequency, duration, type = 'sine') {
+            if (!gameState.soundEnabled) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
         }
 
-        // --- শত্রু (Enemies) ---
-        const enemies = [];
-        class Enemy {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.width = 25;
-                this.height = 25;
-                this.speed = 1.5;
-                this.health = 30;
-                this.color = '#ff0000'; // লাল রঙ
-            }
-            update() {
-                // সহজ AI: শত্রু সরাসরি প্লেয়ারের দিকে যায়
-                const angle = Math.atan2(player.y - this.y, player.x - this.x);
-                this.x += Math.cos(angle) * this.speed;
-                this.y += Math.sin(angle) * this.speed;
-            }
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
-                // স্বাস্থ্য বার
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2 - 10, this.width, 3);
-                ctx.fillStyle = '#ff0000';
-                ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2 - 10, this.width * (this.health / 30), 3);
-            }
-            takeDamage(damage) {
-                this.health -= damage;
-            }
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊' : '🔇';
         }
 
-        // --- বাড়িঘর (Buildings) ---
-        const buildings = [
-            { x: 100, y: 100, width: 150, height: 100, color: '#8B4513' }, // বাদামী রঙ
-            { x: 650, y: 400, width: 200, height: 150, color: '#696969' }, // ধূসর রঙ
-            { x: 400, y: 50, width: 100, height: 120, color: '#8B4513' },
-            { x: 50, y: 450, width: 120, height: 100, color: '#696969' }
-        ];
-
-        // --- মাটিতে পড়ে থাকা অস্ত্র (Guns on Ground) ---
-        const guns = [
-            { x: 150, y: 150, width: 20, height: 10, color: '#ffa500', name: 'Pistol' }, // কমলা রঙ
-            { x: 700, y: 450, width: 25, height: 12, color: '#ff00ff', name: 'Rifle' } // ম্যাজেন্টা রঙ
-        ];
-
-        // --- কলিশন ডিটেকশন (Collision Detection) ---
-        function rectCollision(rect1, rect2) {
-            return rect1.x < rect2.x + rect2.width &&
-                   rect1.x + rect1.width > rect2.x &&
-                   rect1.y < rect2.y + rect2.height &&
-                   rect1.y + rect1.height > rect2.y;
-        }
-
-        // --- গেম লজিক ---
-        function updatePlayer() {
-            let dx = 0;
-            let dy = 0;
-            if (keys['w'] || keys['arrowup']) dy = -player.speed;
-            if (keys['s'] || keys['arrowdown']) dy = player.speed;
-            if (keys['a'] || keys['arrowleft']) dx = -player.speed;
-            if (keys['d'] || keys['arrowright']) dx = player.speed;
-
-            const nextX = player.x + dx;
-            const nextY = player.y + dy;
-
-            // বাড়িঘরের সাথে কলিশন চেক
-            let canMove = true;
-            const futurePlayer = { x: nextX - player.width / 2, y: nextY - player.height / 2, width: player.width, height: player.height };
-            for (const building of buildings) {
-                if (rectCollision(futurePlayer, building)) {
-                    canMove = false;
-                    break;
-                }
-            }
-
-            if (canMove) {
-                player.x = nextX;
-                player.y = nextY;
+        // Generate crash point with realistic distribution
+        function generateCrashPoint() {
+            const random = Math.random();
+            let crashPoint;
+            
+            if (random < 0.1) {
+                // 10% chance to crash below 1.5x
+                crashPoint = 1 + Math.random() * 0.5;
+            } else if (random < 0.3) {
+                // 20% chance to crash between 1.5x and 2x
+                crashPoint = 1.5 + Math.random() * 0.5;
+            } else if (random < 0.6) {
+                // 30% chance to crash between 2x and 5x
+                crashPoint = 2 + Math.random() * 3;
+            } else if (random < 0.85) {
+                // 25% chance to crash between 5x and 10x
+                crashPoint = 5 + Math.random() * 5;
+            } else if (random < 0.95) {
+                // 10% chance to crash between 10x and 20x
+                crashPoint = 10 + Math.random() * 10;
+            } else {
+                // 5% chance to crash above 20x
+                crashPoint = 20 + Math.random() * 30;
             }
             
-            // ক্যানভাসের বাইরে যেতে না দেওয়া
-            player.x = Math.max(player.width / 2, Math.min(canvas.width - player.width / 2, player.x));
-            player.y = Math.max(player.height / 2, Math.min(canvas.height - player.height / 2, player.y));
+            return Math.round(crashPoint * 100) / 100;
         }
 
-        function shoot() {
-            if (gameOver) return;
-            const angle = Math.atan2(mouseY - player.y, mouseX - player.x);
-            bullets.push(new Bullet(player.x, player.y, angle));
-        }
-        canvas.addEventListener('click', shoot);
-
-        function spawnEnemy() {
-            if (gameOver) return;
-            const side = Math.floor(Math.random() * 4);
-            let x, y;
-            if (side === 0) { x = Math.random() * canvas.width; y = -30; }
-            else if (side === 1) { x = canvas.width + 30; y = Math.random() * canvas.height; }
-            else if (side === 2) { x = Math.random() * canvas.width; y = canvas.height + 30; }
-            else { x = -30; y = Math.random() * canvas.height; }
-            enemies.push(new Enemy(x, y));
-        }
-        setInterval(spawnEnemy, 2000); // প্রতি ২ সেকেন্ডে একটি শত্রু আসবে
-
-        // --- ড্রয়িং ফাংশন ---
-        function draw() {
-            // ক্যানভাস পরিষ্কার
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // বাড়িঘর আঁকা
-            ctx.fillStyle = '#8B4513'; // একটা ডিফল্ট রঙ
-            for (const building of buildings) {
-                ctx.fillStyle = building.color;
-                ctx.fillRect(building.x, building.y, building.width, building.height);
-            }
-
-            // মাটিতে পড়ে থাকা অস্ত্র আঁকা
-            for (const gun of guns) {
-                ctx.fillStyle = gun.color;
-                ctx.fillRect(gun.x - gun.width / 2, gun.y - gun.height / 2, gun.width, gun.height);
-            }
-
-            // প্লেয়ার আঁকা
-            ctx.fillStyle = player.color;
-            ctx.fillRect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
+        // Place bet
+        function placeBet() {
+            const betAmount = parseFloat(betAmountInput.value);
             
-            // প্লেয়ারের দিকে একটি লাইন আঁকা (আইমিং এর জন্য)
-            ctx.strokeStyle = 'white';
-            ctx.beginPath();
-            ctx.moveTo(player.x, player.y);
-            const aimLength = 50;
-            const angle = Math.atan2(mouseY - player.y, mouseX - player.x);
-            ctx.lineTo(player.x + Math.cos(angle) * aimLength, player.y + Math.sin(angle) * aimLength);
-            ctx.stroke();
-
-
-            // শত্রু আঁকা
-            for (const enemy of enemies) {
-                enemy.draw();
+            if (betAmount > gameState.balance) {
+                showMessage('পর্যাপ্ত ব্যালেন্স নেই!', 'error');
+                return;
             }
-
-            // গুলি আঁকা
-            for (const bullet of bullets) {
-                bullet.draw();
+            
+            if (betAmount < 10) {
+                showMessage('ন্যূনতম বাজি ৳10', 'error');
+                return;
             }
-
-            // UI আপডেট
-            document.getElementById('health').textContent = player.health;
-            document.getElementById('score').textContent = score;
-
-            // গেম ওভার স্ক্রিন
-            if (gameOver) {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = 'white';
-                ctx.font = '60px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('গেম ওভার!', canvas.width / 2, canvas.height / 2 - 30);
-                ctx.font = '30px Arial';
-                ctx.fillText(`আপনার স্কোর: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
-            }
+            
+            gameState.betAmount = betAmount;
+            gameState.balance -= betAmount;
+            gameState.hasBet = true;
+            gameState.hasCashedOut = false;
+            updateBalance();
+            
+            startGame();
         }
 
-        // --- মূল গেম লুপ ---
+        // Start game
+        function startGame() {
+            gameState.isPlaying = true;
+            gameState.currentMultiplier = 1.00;
+            gameState.crashPoint = generateCrashPoint();
+            
+            betButton.textContent = 'ক্যাশআউট';
+            betButton.className = 'bet-button cashout';
+            betButton.onclick = cashOut;
+            
+            // Reset plane position
+            plane.style.left = '50px';
+            plane.style.bottom = '50px';
+            plane.style.transform = 'rotate(0deg)';
+            
+            // Reset trail
+            trail.style.height = '0px';
+            trail.style.left = '70px';
+            trail.style.bottom = '50px';
+            
+            // Generate live bets
+            generateLiveBets();
+            
+            // Start game loop
+            gameLoop();
+            
+            playSound(440, 0.1);
+        }
+
+        // Game loop
         function gameLoop() {
-            if (!gameOver) {
-                updatePlayer();
-
-                // গুলি আপডেট
-                for (let i = bullets.length - 1; i >= 0; i--) {
-                    bullets[i].update();
-                    if (bullets[i].isOffScreen()) {
-                        bullets.splice(i, 1);
-                        continue;
-                    }
-
-                    // গুলি বনাম বাড়িঘর
-                    let hitBuilding = false;
-                    for (const building of buildings) {
-                        if (rectCollision(bullets[i], building)) {
-                            hitBuilding = true;
-                            break;
-                        }
-                    }
-                    if (hitBuilding) {
-                        bullets.splice(i, 1);
-                        continue;
-                    }
-
-                    // গুলি বনাম শত্রু
-                    for (let j = enemies.length - 1; j >= 0; j--) {
-                        if (rectCollision(bullets[i], enemies[j])) {
-                            enemies[j].takeDamage(10);
-                            bullets.splice(i, 1);
-                            if (enemies[j].health <= 0) {
-                                enemies.splice(j, 1);
-                                score += 10;
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                // শত্রু আপডেট
-                for (const enemy of enemies) {
-                    enemy.update();
-                    // শত্রু বনাম প্লেয়ার
-                    if (rectCollision(enemy, player)) {
-                        player.health -= 1;
-                        if (player.health <= 0) {
-                            gameOver = true;
-                        }
-                    }
+            if (!gameState.isPlaying) return;
+            
+            // Update multiplier
+            gameState.currentMultiplier += 0.01;
+            const displayMultiplier = Math.round(gameState.currentMultiplier * 100) / 100;
+            multiplierDisplay.textContent = displayMultiplier + 'x';
+            
+            // Update plane position
+            const canvasHeight = gameCanvas.offsetHeight;
+            const planeY = (gameState.currentMultiplier - 1) * 30;
+            const planeX = 50 + (gameState.currentMultiplier - 1) * 15;
+            
+            plane.style.bottom = Math.min(planeY + 50, canvasHeight - 50) + 'px';
+            plane.style.left = Math.min(planeX, gameCanvas.offsetWidth - 100) + 'px';
+            plane.style.transform = `rotate(-${Math.min(gameState.currentMultiplier * 2, 45)}deg)`;
+            
+            // Update trail
+            trail.style.height = planeY + 'px';
+            
+            // Play sound effect
+            if (gameState.currentMultiplier % 1 < 0.02) {
+                playSound(440 + gameState.currentMultiplier * 20, 0.05);
+            }
+            
+            // Check auto cashout
+            if (autoCashoutCheck.checked && !gameState.hasCashedOut) {
+                const autoValue = parseFloat(autoCashoutValue.value);
+                if (gameState.currentMultiplier >= autoValue) {
+                    cashOut();
                 }
             }
-
-            draw();
+            
+            // Check crash
+            if (gameState.currentMultiplier >= gameState.crashPoint) {
+                crash();
+                return;
+            }
+            
             requestAnimationFrame(gameLoop);
         }
 
-        // --- গেম শুরু ---
-        gameLoop();
+        // Cash out
+        function cashOut() {
+            if (!gameState.hasBet || gameState.hasCashedOut) return;
+            
+            gameState.hasCashedOut = true;
+            const winAmount = Math.round(gameState.betAmount * gameState.currentMultiplier);
+            gameState.balance += winAmount;
+            gameState.totalWins += winAmount - gameState.betAmount;
+            
+            updateBalance();
+            updateStats();
+            
+            showMessage(`আপনি ক্যাশআউট করেছেন! জয়: ৳${winAmount} (${gameState.currentMultiplier.toFixed(2)}x)`, 'success');
+            
+            playSound(880, 0.3);
+            
+            // Update live bet
+            updateLiveBet(true);
+        }
 
+        // Crash
+        function crash() {
+            gameState.isPlaying = false;
+            multiplierDisplay.textContent = 'CRASHED!';
+            multiplierDisplay.style.color = '#ef4444';
+            
+            // Add to history
+            addToHistory(gameState.crashPoint);
+            
+            // Update stats
+            gameState.stats.totalGames++;
+            gameState.stats.multipliers.push(gameState.crashPoint);
+            if (gameState.crashPoint > gameState.stats.maxMultiplier) {
+                gameState.stats.maxMultiplier = gameState.crashPoint;
+            }
+            updateStats();
+            
+            // Check if player lost
+            if (gameState.hasBet && !gameState.hasCashedOut) {
+                showMessage(`ক্র্যাশ! আপনি ৳${gameState.betAmount} হারিয়েছেন (${gameState.crashPoint.toFixed(2)}x)`, 'error');
+            }
+            
+            // Update live bets
+            updateLiveBetsAfterCrash();
+            
+            // Play crash sound
+            playSound(200, 0.5, 'sawtooth');
+            
+            // Reset after delay
+            setTimeout(() => {
+                resetGame();
+            }, 3000);
+        }
+
+        // Reset game
+        function resetGame() {
+            gameState.isPlaying = false;
+            gameState.hasBet = false;
+            gameState.hasCashedOut = false;
+            gameState.currentMultiplier = 1.00;
+            
+            multiplierDisplay.textContent = '1.00x';
+            multiplierDisplay.style.color = 'white';
+            
+            betButton.textContent = 'বাজি ধরুন';
+            betButton.className = 'bet-button bet';
+            betButton.onclick = placeBet;
+            
+            plane.style.left = '50px';
+            plane.style.bottom = '50px';
+            plane.style.transform = 'rotate(0deg)';
+            
+            trail.style.height = '0px';
+        }
+
+        // Add to history
+        function addToHistory(multiplier) {
+            gameState.history.unshift(multiplier);
+            if (gameState.history.length > 20) {
+                gameState.history.pop();
+            }
+            
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            if (multiplier < 2) {
+                historyItem.classList.add('low');
+            } else if (multiplier < 5) {
+                historyItem.classList.add('medium');
+            } else {
+                historyItem.classList.add('high');
+            }
+            historyItem.textContent = multiplier.toFixed(2) + 'x';
+            
+            historyList.insertBefore(historyItem, historyList.firstChild);
+            
+            if (historyList.children.length > 20) {
+                historyList.removeChild(historyList.lastChild);
+            }
+        }
+
+        // Generate live bets
+        function generateLiveBets() {
+            const names = ['Player123', 'AviatorKing', 'LuckyStar', 'SkyWalker', 'CloudJumper', 'WindRider', 'HighFlyer', 'JetPilot'];
+            const numBets = Math.floor(Math.random() * 5) + 3;
+            
+            gameState.liveBets = [];
+            liveBetsList.innerHTML = '';
+            
+            for (let i = 0; i < numBets; i++) {
+                const name = names[Math.floor(Math.random() * names.length)] + Math.floor(Math.random() * 1000);
+                const amount = Math.floor(Math.random() * 2000) + 100;
+                const autoCashout = Math.random() > 0.5 ? (Math.random() * 5 + 1.5).toFixed(2) : null;
+                
+                gameState.liveBets.push({ name, amount, autoCashout, cashedOut: false });
+                
+                const betItem = document.createElement('div');
+                betItem.className = 'live-bet-item';
+                betItem.innerHTML = `
+                    <span class="player-name">${name}</span>
+                    <span class="bet-amount-display">৳${amount}</span>
+                    <span>${autoCashout ? `Auto: ${autoCashout}x` : 'Playing'}</span>
+                `;
+                liveBetsList.appendChild(betItem);
+            }
+        }
+
+        // Update live bet
+        function updateLiveBet(cashedOut) {
+            // Simulate other players cashing out
+            gameState.liveBets.forEach((bet, index) => {
+                if (!bet.cashedOut && Math.random() > 0.7) {
+                    bet.cashedOut = true;
+                    const cashoutMultiplier = (Math.random() * 3 + 1.2).toFixed(2);
+                    
+                    setTimeout(() => {
+                        const betItems = liveBetsList.children;
+                        if (betItems[index]) {
+                            betItems[index].innerHTML = `
+                                <span class="player-name">${bet.name}</span>
+                                <span class="bet-amount-display">৳${bet.amount}</span>
+                                <span class="cashout-multiplier">${cashoutMultiplier}x</span>
+                            `;
+                        }
+                    }, Math.random() * 2000);
+                }
+            });
+        }
+
+        // Update live bets after crash
+        function updateLiveBetsAfterCrash() {
+            gameState.liveBets.forEach((bet, index) => {
+                if (!bet.cashedOut) {
+                    const betItems = liveBetsList.children;
+                    if (betItems[index]) {
+                        betItems[index].innerHTML = `
+                            <span class="player-name">${bet.name}</span>
+                            <span class="bet-amount-display">৳${bet.amount}</span>
+                            <span class="crashed">CRASHED</span>
+                        `;
+                    }
+                }
+            });
+        }
+
+        // Update balance display
+        function updateBalance() {
+            balanceDisplay.textContent = '৳' + gameState.balance.toLocaleString();
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('maxMultiplier').textContent = gameState.stats.maxMultiplier.toFixed(2) + 'x';
+            document.getElementById('totalGames').textContent = gameState.stats.totalGames;
+            document.getElementById('totalWins').textContent = '৳' + gameState.totalWins.toLocaleString();
+            
+            if (gameState.stats.multipliers.length > 0) {
+                const avg = gameState.stats.multipliers.reduce((a, b) => a + b, 0) / gameState.stats.multipliers.length;
+                document.getElementById('avgMultiplier').textContent = avg.toFixed(2) + 'x';
+            }
+        }
+
+        // Set bet amount
+        function setBetAmount(amount) {
+            betAmountInput.value = amount;
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateBalance();
+            updateStats();
+            
+            // Add some initial history
+            for (let i = 0; i < 10; i++) {
+                const randomMultiplier = generateCrashPoint();
+                addToHistory(randomMultiplier);
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                if (gameState.isPlaying && gameState.hasBet && !gameState.hasCashedOut) {
+                    cashOut();
+                } else if (!gameState.isPlaying) {
+                    placeBet();
+                }
+            }
+        });
     </script>
 </body>
 </html>
