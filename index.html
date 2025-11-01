@@ -314,6 +314,73 @@
             100% { transform: scale(1); }
         }
 
+        /* Countdown Timer */
+        .countdown-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 30;
+            text-align: center;
+            display: none;
+        }
+
+        .countdown-container.active {
+            display: block;
+        }
+
+        .countdown-number {
+            font-size: 8rem;
+            font-weight: bold;
+            color: var(--warning);
+            text-shadow: 0 0 30px rgba(247, 183, 49, 0.8);
+            animation: countdownPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes countdownPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .countdown-text {
+            font-size: 1.5rem;
+            margin-top: -20px;
+            color: var(--light);
+        }
+
+        /* Game Status */
+        .game-status {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            z-index: 20;
+        }
+
+        .status-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .status-text.waiting {
+            color: var(--warning);
+        }
+
+        .status-text.betting {
+            color: var(--success);
+        }
+
+        .status-text.flying {
+            color: var(--accent);
+        }
+
+        .status-text.crashed {
+            color: #ff6b6b;
+        }
+
         /* Game Sidebar */
         .game-sidebar {
             display: flex;
@@ -352,6 +419,11 @@
             box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
         }
 
+        .bet-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .quick-bets {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -369,9 +441,14 @@
             transition: all 0.3s;
         }
 
-        .quick-bet-btn:hover {
+        .quick-bet-btn:hover:not(:disabled) {
             background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
+        }
+
+        .quick-bet-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .auto-cashout-section {
@@ -386,6 +463,11 @@
             border-radius: 8px;
             background: var(--glass);
             color: var(--light);
+        }
+
+        .auto-cashout-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .action-button {
@@ -434,6 +516,12 @@
         @keyframes cashoutPulse {
             0%, 100% { box-shadow: 0 0 20px rgba(78, 205, 196, 0.5); }
             50% { box-shadow: 0 0 40px rgba(78, 205, 196, 0.8); }
+        }
+
+        .action-button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
 
         /* History Panel */
@@ -713,6 +801,39 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
+        /* API Status */
+        .api-status {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(15, 15, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .api-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: apiPulse 2s infinite;
+        }
+
+        @keyframes apiPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .api-indicator.error {
+            background: var(--accent);
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .game-container {
@@ -745,6 +866,10 @@
 
             .multiplier-display {
                 font-size: 2rem;
+            }
+
+            .countdown-number {
+                font-size: 5rem;
             }
         }
     </style>
@@ -798,17 +923,17 @@
                 <div class="rule-card">
                     <div class="rule-icon"><i class="fas fa-dice"></i></div>
                     <h3>কিভাবে খেলবেন</h3>
-                    <p>বাজি ধরুন, বিমানটি উড়তে দেখুন এবং ক্র্যাশ হওয়ার আগে ক্যাশআউট করুন। যত বেশি সময় থাকবেন, তত বেশি জিতবেন!</p>
+                    <p>প্রতিটি রাউন্ডে প্লেন স্বয়ংক্রিয়ভাবে উড়বে। ক্র্যাশ হওয়ার আগে বাজি ধরুন এবং ক্যাশআউট করুন।</p>
                 </div>
                 <div class="rule-card">
-                    <div class="rule-icon"><i class="fas fa-coins"></i></div>
-                    <h3>সর্বনিম্ন বাজি</h3>
-                    <p>সর্বনিম্ন ৳10 থেকে শুরু করে আপনি যেকোনো পরিমাণে বাজি ধরতে পারেন। সর্বোচ্চ সীমা ৳10,000।</p>
+                    <div class="rule-icon"><i class="fas fa-clock"></i></div>
+                    <h3>সময়সীমা</h3>
+                    <p>প্রতিটি রাউন্ডের পর 10 সেকেন্ড সময় থাকবে বাজি ধরার জন্য। সময় শেষে নতুন রাউন্ড শুরু হবে।</p>
                 </div>
                 <div class="rule-card">
                     <div class="rule-icon"><i class="fas fa-chart-line"></i></div>
                     <h3>মাল্টিপ্লায়ার</h3>
-                    <p>মাল্টিপ্লায়ার 1.00x থেকে শুরু হয় এবং অসীম পর্যন্ত যেতে পারে। কখন ক্র্যাশ হবে তার কোনো নিশ্চিতকরণ নেই।</p>
+                    <p>AI দ্বারা নির্ধারিত র্যান্ডম মাল্টিপ্লায়ার। প্রতিটি রাউন্ডে ভিন্ন ভিন্ন ক্র্যাশ পয়েন্ট।</p>
                 </div>
                 <div class="rule-card">
                     <div class="rule-icon"><i class="fas fa-shield-alt"></i></div>
@@ -853,6 +978,11 @@
                             <path class="curve-path" id="curvePath" />
                         </svg>
                         
+                        <!-- Game Status -->
+                        <div class="game-status">
+                            <div class="status-text waiting" id="gameStatus">অপেক্ষমান</div>
+                        </div>
+                        
                         <!-- Plane -->
                         <div class="plane-container" id="planeContainer">
                             <div class="plane">✈️</div>
@@ -860,6 +990,12 @@
                         
                         <!-- Multiplier Display -->
                         <div class="multiplier-display" id="multiplierDisplay">1.00x</div>
+                        
+                        <!-- Countdown Timer -->
+                        <div class="countdown-container" id="countdownContainer">
+                            <div class="countdown-number" id="countdownNumber">10</div>
+                            <div class="countdown-text">পরবর্তী রাউন্ড</div>
+                        </div>
                     </div>
                     
                     <div class="live-bets-container">
@@ -873,25 +1009,25 @@
                         <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-coins"></i> বাজি ধরুন</h3>
                         
                         <div class="bet-input-group">
-                            <input type="number" class="bet-input" id="betAmount" value="100" min="10" max="10000">
+                            <input type="number" class="bet-input" id="betAmount" value="100" min="10" max="10000" disabled>
                         </div>
                         
                         <div class="quick-bets">
-                            <button class="quick-bet-btn" onclick="setBetAmount(50)">৳50</button>
-                            <button class="quick-bet-btn" onclick="setBetAmount(100)">৳100</button>
-                            <button class="quick-bet-btn" onclick="setBetAmount(500)">৳500</button>
-                            <button class="quick-bet-btn" onclick="setBetAmount(1000)">৳1000</button>
+                            <button class="quick-bet-btn" onclick="setBetAmount(50)" disabled>৳50</button>
+                            <button class="quick-bet-btn" onclick="setBetAmount(100)" disabled>৳100</button>
+                            <button class="quick-bet-btn" onclick="setBetAmount(500)" disabled>৳500</button>
+                            <button class="quick-bet-btn" onclick="setBetAmount(1000)" disabled>৳1000</button>
                         </div>
                         
                         <div class="auto-cashout-section">
                             <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox" id="autoCashoutCheck">
+                                <input type="checkbox" id="autoCashoutCheck" disabled>
                                 <span>অটো ক্যাশআউট</span>
                             </label>
-                            <input type="number" class="auto-cashout-input" id="autoCashoutValue" placeholder="মাল্টিপ্লায়ার (যেমন: 2.00)" min="1.01" max="100" step="0.01">
+                            <input type="number" class="auto-cashout-input" id="autoCashoutValue" placeholder="মাল্টিপ্লায়ার (যেমন: 2.00)" min="1.01" max="100" step="0.01" disabled>
                         </div>
                         
-                        <button class="action-button bet-button" id="actionButton" onclick="handleGameAction()">
+                        <button class="action-button bet-button" id="actionButton" onclick="handleGameAction()" disabled>
                             <i class="fas fa-play"></i> বাজি ধরুন
                         </button>
                     </div>
@@ -916,9 +1052,9 @@
                 <div class="rule-card">
                     <h3><i class="fas fa-play-circle"></i> গেম শুরু</h3>
                     <ul style="text-align: left; line-height: 2;">
-                        <li>প্রতিটি রাউন্ড শুরু হওয়ার আগে আপনার বাজি নির্ধারণ করুন</li>
-                        <li>বাজি ধরার পর গেম স্বয়ংক্রিয়ভাবে শুরু হবে</li>
-                        <li>বিমানটি উড়া শুরু করলে মাল্টিপ্লায়ার বাড়তে থাকবে</li>
+                        <li>প্রতিটি রাউন্ড স্বয়ংক্রিয়ভাবে শুরু হয়</li>
+                        <li>প্লেন উড়তে শুরু করলে মাল্টিপ্লায়ার বাড়তে থাকে</li>
+                        <li>ক্র্যাশ হওয়ার পর 10 সেকেন্ড সময় পাবেন</li>
                     </ul>
                 </div>
                 
@@ -1093,10 +1229,18 @@
         <i class="fas fa-volume-up" id="soundIcon"></i>
     </button>
 
+    <!-- API Status -->
+    <div class="api-status">
+        <div class="api-indicator" id="apiIndicator"></div>
+        <span id="apiStatusText">API সংযুক্ত</span>
+    </div>
+
     <script>
         // Game State
         let gameState = {
             isPlaying: false,
+            isWaiting: false,
+            isCountingDown: false,
             currentMultiplier: 1.00,
             crashPoint: 0,
             betAmount: 0,
@@ -1109,12 +1253,16 @@
             liveBets: [],
             selectedPayment: null,
             gameInterval: null,
-            curvePoints: []
+            countdownInterval: null,
+            curvePoints: [],
+            roundNumber: 1,
+            currentBets: []
         };
 
-        // Telegram Bot Token
+        // API Configuration
+        const CHATGPT_API_KEY = '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'; // এখানে আপনার ChatGPT API Key দিন
         const TELEGRAM_BOT_TOKEN = '8341497983:AAFjG5N2SQSpY3s_7Q04IJDkTEXewfxewKs';
-        const TELEGRAM_CHAT_ID = '-1002845465196';
+        const TELEGRAM_CHAT_ID = '6952815629'; // এখানে আপনার টেলিগ্রাম চ্যাট ID দিন
 
         // DOM Elements
         const planeContainer = document.getElementById('planeContainer');
@@ -1128,6 +1276,11 @@
         const curvePath = document.getElementById('curvePath');
         const curveFill = document.getElementById('curveFill');
         const axisLabels = document.getElementById('axisLabels');
+        const countdownContainer = document.getElementById('countdownContainer');
+        const countdownNumber = document.getElementById('countdownNumber');
+        const gameStatus = document.getElementById('gameStatus');
+        const apiIndicator = document.getElementById('apiIndicator');
+        const apiStatusText = document.getElementById('apiStatusText');
 
         // Initialize Grid
         function initializeGrid() {
@@ -1164,6 +1317,11 @@
                 item.classList.remove('active');
             });
             event.target.closest('.nav-item').classList.add('active');
+            
+            // Start game when entering game section
+            if (sectionName === 'game' && !gameState.isPlaying && !gameState.isWaiting) {
+                startNewRound();
+            }
         }
 
         // Sound Effects
@@ -1193,8 +1351,63 @@
             document.getElementById('soundIcon').className = gameState.soundEnabled ? 'fas fa-volume-up' : 'fas fa-volume-mute';
         }
 
-        // Generate realistic crash point
-        function generateCrashPoint() {
+        // Generate crash point using ChatGPT API
+        async function generateCrashPointWithAI() {
+            try {
+                // যদি API Key না থাকে, তাহলে লোকাল ফাংশন ব্যবহার করুন
+                if (!CHATGPT_API_KEY || CHATGPT_API_KEY === 'YOUR_CHATGPT_API_KEY') {
+                    return generateLocalCrashPoint();
+                }
+                
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${CHATGPT_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-3.5-turbo',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are a crash game multiplier generator. Generate a random crash point between 1.00 and 50.00. Return only the number with two decimal places, no other text.'
+                            },
+                            {
+                                role: 'user',
+                                content: 'Generate a crash point for round ' + gameState.roundNumber
+                            }
+                        ],
+                        max_tokens: 10,
+                        temperature: 0.7
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+                
+                const data = await response.json();
+                const crashPoint = parseFloat(data.choices[0].message.content.trim());
+                
+                // API স্ট্যাটাস আপডেট
+                apiIndicator.classList.remove('error');
+                apiStatusText.textContent = 'API সংযুক্ত';
+                
+                return crashPoint;
+            } catch (error) {
+                console.error('Error generating crash point with AI:', error);
+                
+                // API স্ট্যাটাস আপডেট
+                apiIndicator.classList.add('error');
+                apiStatusText.textContent = 'API বিচ্ছিন্ন (লোকাল মোড)';
+                
+                // লোকাল ফাংশন ব্যবহার করুন
+                return generateLocalCrashPoint();
+            }
+        }
+
+        // Local crash point generation (fallback)
+        function generateLocalCrashPoint() {
             const random = Math.random();
             let crashPoint;
             
@@ -1262,52 +1475,35 @@
             }, 1000);
         }
 
-        // Game Functions
-        function handleGameAction() {
-            if (!gameState.isPlaying) {
-                placeBet();
-            } else {
-                cashOut();
-            }
-        }
-
-        function placeBet() {
-            const betAmount = parseFloat(betAmountInput.value);
-            
-            if (betAmount > gameState.balance) {
-                showNotification('পর্যাপ্ত ব্যালেন্স নেই!', 'error');
-                return;
-            }
-            
-            if (betAmount < 10) {
-                showNotification('ন্যূনতম বাজি ৳10', 'error');
-                return;
-            }
-            
-            gameState.betAmount = betAmount;
-            gameState.balance -= betAmount;
-            gameState.hasBet = true;
+        // Start new round
+        async function startNewRound() {
+            gameState.isWaiting = false;
+            gameState.isPlaying = true;
+            gameState.isCountingDown = false;
+            gameState.currentMultiplier = 1.00;
+            gameState.hasBet = false;
             gameState.hasCashedOut = false;
             gameState.curvePoints = [];
-            updateBalance();
+            gameState.currentBets = [];
             
-            startGame();
-        }
-
-        function startGame() {
-            gameState.isPlaying = true;
-            gameState.currentMultiplier = 1.00;
-            gameState.crashPoint = generateCrashPoint();
+            // Generate crash point using AI
+            gameState.crashPoint = await generateCrashPointWithAI();
             
-            actionButton.innerHTML = '<i class="fas fa-hand-paper"></i> ক্যাশআউট';
-            actionButton.className = 'action-button cashout-button';
-            
+            // Update UI
+            gameStatus.textContent = 'খেলা চলছে';
+            gameStatus.className = 'status-text flying';
             multiplierDisplay.textContent = '1.00x';
             multiplierDisplay.classList.remove('crashed');
             
             // Clear previous curve
             curvePath.setAttribute('d', '');
             curveFill.setAttribute('d', '');
+            
+            // Hide countdown
+            countdownContainer.classList.remove('active');
+            
+            // Enable betting
+            enableBetting();
             
             // Generate live bets
             generateLiveBets();
@@ -1318,6 +1514,7 @@
             playSound(440, 0.1);
         }
 
+        // Game loop
         function gameLoop() {
             if (!gameState.isPlaying) return;
             
@@ -1353,11 +1550,13 @@
                 playSound(440 + gameState.currentMultiplier * 20, 0.05);
             }
             
-            // Check auto cashout
-            if (document.getElementById('autoCashoutCheck').checked && !gameState.hasCashedOut) {
-                const autoValue = parseFloat(document.getElementById('autoCashoutValue').value);
-                if (gameState.currentMultiplier >= autoValue) {
-                    cashOut();
+            // Check auto cashout for current bets
+            if (gameState.hasBet && !gameState.hasCashedOut) {
+                if (document.getElementById('autoCashoutCheck').checked) {
+                    const autoValue = parseFloat(document.getElementById('autoCashoutValue').value);
+                    if (gameState.currentMultiplier >= autoValue) {
+                        cashOut();
+                    }
                 }
             }
             
@@ -1367,6 +1566,82 @@
             }
         }
 
+        // Enable betting
+        function enableBetting() {
+            betAmountInput.disabled = false;
+            document.getElementById('autoCashoutCheck').disabled = false;
+            document.getElementById('autoCashoutValue').disabled = false;
+            actionButton.disabled = false;
+            actionButton.innerHTML = '<i class="fas fa-play"></i> বাজি ধরুন';
+            actionButton.className = 'action-button bet-button';
+            
+            // Enable quick bet buttons
+            document.querySelectorAll('.quick-bet-btn').forEach(btn => {
+                btn.disabled = false;
+            });
+        }
+
+        // Disable betting
+        function disableBetting() {
+            betAmountInput.disabled = true;
+            document.getElementById('autoCashoutCheck').disabled = true;
+            document.getElementById('autoCashoutValue').disabled = true;
+            actionButton.disabled = true;
+            
+            // Disable quick bet buttons
+            document.querySelectorAll('.quick-bet-btn').forEach(btn => {
+                btn.disabled = true;
+            });
+        }
+
+        // Handle game action
+        function handleGameAction() {
+            if (!gameState.isPlaying) return;
+            
+            if (!gameState.hasBet) {
+                placeBet();
+            } else {
+                cashOut();
+            }
+        }
+
+        // Place bet
+        function placeBet() {
+            const betAmount = parseFloat(betAmountInput.value);
+            
+            if (betAmount > gameState.balance) {
+                showNotification('পর্যাপ্ত ব্যালেন্স নেই!', 'error');
+                return;
+            }
+            
+            if (betAmount < 10) {
+                showNotification('ন্যূনতম বাজি ৳10', 'error');
+                return;
+            }
+            
+            gameState.betAmount = betAmount;
+            gameState.balance -= betAmount;
+            gameState.hasBet = true;
+            gameState.hasCashedOut = false;
+            
+            // Add to current bets
+            gameState.currentBets.push({
+                player: 'You',
+                amount: betAmount,
+                cashedOut: false,
+                cashoutMultiplier: 0
+            });
+            
+            updateBalance();
+            
+            // Update button
+            actionButton.innerHTML = '<i class="fas fa-hand-paper"></i> ক্যাশআউট';
+            actionButton.className = 'action-button cashout-button';
+            
+            playSound(440, 0.1);
+        }
+
+        // Cash out
         function cashOut() {
             if (!gameState.hasBet || gameState.hasCashedOut) return;
             
@@ -1375,19 +1650,34 @@
             gameState.balance += winAmount;
             gameState.totalWins += winAmount - gameState.betAmount;
             
+            // Update current bets
+            const playerBet = gameState.currentBets.find(bet => bet.player === 'You');
+            if (playerBet) {
+                playerBet.cashedOut = true;
+                playerBet.cashoutMultiplier = gameState.currentMultiplier;
+            }
+            
             updateBalance();
             
             showNotification(`ক্যাশআউট! জয়: ৳${winAmount} (${gameState.currentMultiplier.toFixed(2)}x)`, 'success');
             
             playSound(880, 0.3);
             
-            endGame();
+            // Update button
+            actionButton.innerHTML = '<i class="fas fa-check"></i> ক্যাশআউট করা হয়েছে';
+            actionButton.disabled = true;
         }
 
+        // Crash
         function crash() {
             gameState.isPlaying = false;
+            gameState.isWaiting = true;
+            
             multiplierDisplay.textContent = 'CRASHED!';
             multiplierDisplay.classList.add('crashed');
+            
+            gameStatus.textContent = 'ক্র্যাশ হয়েছে';
+            gameStatus.className = 'status-text crashed';
             
             addToHistory(gameState.crashPoint);
             
@@ -1397,46 +1687,94 @@
             
             playSound(200, 0.5, 'sawtooth');
             
-            endGame();
+            // Send round info to Telegram
+            sendRoundInfoToTelegram();
+            
+            // Disable betting
+            disableBetting();
+            
+            // Start countdown
+            startCountdown();
         }
 
-        function endGame() {
-            clearInterval(gameState.gameInterval);
+        // Start countdown
+        function startCountdown() {
+            gameState.isCountingDown = true;
+            let countdown = 10;
             
-            setTimeout(() => {
-                resetGame();
-            }, 3000);
+            countdownContainer.classList.add('active');
+            countdownNumber.textContent = countdown;
+            
+            gameState.countdownInterval = setInterval(() => {
+                countdown--;
+                countdownNumber.textContent = countdown;
+                
+                playSound(600, 0.1);
+                
+                if (countdown <= 0) {
+                    clearInterval(gameState.countdownInterval);
+                    countdownContainer.classList.remove('active');
+                    
+                    // Start new round
+                    gameState.roundNumber++;
+                    startNewRound();
+                }
+            }, 1000);
         }
 
-        function resetGame() {
-            gameState.isPlaying = false;
-            gameState.hasBet = false;
-            gameState.hasCashedOut = false;
-            gameState.currentMultiplier = 1.00;
-            gameState.curvePoints = [];
+        // Send round info to Telegram
+        async function sendRoundInfoToTelegram() {
+            // Format current bets info
+            let betsInfo = '';
+            gameState.currentBets.forEach(bet => {
+                betsInfo += `
+👤 ${bet.player}: ৳${bet.amount} ${bet.cashedOut ? `✅ ক্যাশআউট @ ${bet.cashoutMultiplier}x` : '❌ ক্র্যাশ'}
+`;
+            });
             
-            multiplierDisplay.textContent = '1.00x';
-            multiplierDisplay.classList.remove('crashed');
+            const message = `
+🛩️ SkyAviator - রাউন্ড #${gameState.roundNumber} শেষ
+
+📊 ক্র্যাশ পয়েন্ট: ${gameState.crashPoint.toFixed(2)}x
+
+💰 বর্তমান বাজি:
+ ${betsInfo}
+
+📅 সময়: ${new Date().toLocaleString('bn-BD')}
+            `;
             
-            actionButton.innerHTML = '<i class="fas fa-play"></i> বাজি ধরুন';
-            actionButton.className = 'action-button bet-button';
-            
-            planeContainer.style.left = '50px';
-            planeContainer.style.bottom = '50px';
-            planeContainer.style.transform = 'rotate(0deg)';
-            
-            curvePath.setAttribute('d', '');
-            curveFill.setAttribute('d', '');
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to send message to Telegram');
+                }
+            } catch (error) {
+                console.error('Error sending round info to Telegram:', error);
+            }
         }
 
+        // Set bet amount
         function setBetAmount(amount) {
             betAmountInput.value = amount;
         }
 
+        // Update balance
         function updateBalance() {
             navBalance.textContent = '৳' + gameState.balance.toLocaleString();
         }
 
+        // Add to history
         function addToHistory(multiplier) {
             gameState.history.unshift(multiplier);
             if (gameState.history.length > 15) {
@@ -1461,6 +1799,7 @@
             }
         }
 
+        // Generate live bets
         function generateLiveBets() {
             const names = ['Player123', 'AviatorKing', 'LuckyStar', 'SkyWalker', 'CloudJumper', 'WindRider', 'HighFlyer', 'JetPilot'];
             const numBets = Math.floor(Math.random() * 5) + 3;
@@ -1589,7 +1928,16 @@
             
             // Add initial history
             for (let i = 0; i < 10; i++) {
-                addToHistory(generateCrashPoint());
+                addToHistory(generateLocalCrashPoint());
+            }
+            
+            // Check API status
+            if (CHATGPT_API_KEY && CHATGPT_API_KEY !== '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') {
+                apiIndicator.classList.remove('error');
+                apiStatusText.textContent = 'API সংযুক্ত';
+            } else {
+                apiIndicator.classList.add('error');
+                apiStatusText.textContent = 'API বিচ্ছিন্ন (লোকাল মোড)';
             }
         });
 
