@@ -1,1127 +1,325 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AdEarn - Telegram Mini App</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ওয়েব ব্যাটেল রয়্যাল</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-color: #0088cc;
-            --secondary-color: #54a3d8;
-            --success-color: #4caf50;
-            --warning-color: #ff9800;
-            --danger-color: #f44336;
-            --dark-bg: #1a1a1a;
-            --light-bg: #f5f5f5;
-            --card-bg: #ffffff;
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --border-color: #e0e0e0;
-            --shadow: 0 2px 10px rgba(0,0,0,0.1);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--light-bg);
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Telegram Web App Styles */
-        .telegram-app {
-            max-width: 100%;
-            margin: 0 auto;
-            background: var(--light-bg);
-            min-height: 100vh;
-            position: relative;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background-color: #1a1a1a;
             color: white;
-            padding: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow);
-        }
-
-        .user-info {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 15px;
-        }
-
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.3);
-            object-fit: cover;
-        }
-
-        .user-details h2 {
-            font-size: 18px;
-            margin-bottom: 3px;
-        }
-
-        .user-details p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        /* Balance Card */
-        .balance-card {
-            background: var(--card-bg);
-            margin: 20px;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            text-align: center;
-            position: relative;
+            height: 100vh;
+            margin: 0;
             overflow: hidden;
         }
-
-        .balance-card::before {
-            content: '';
+        canvas {
+            border: 2px solid #fff;
+            background-color: #3d3d3d;
+            cursor: crosshair;
+        }
+        #info {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-        }
-
-        .balance-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-        }
-
-        .balance-amount {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-        }
-
-        .balance-currency {
-            font-size: 16px;
-            color: var(--text-secondary);
-        }
-
-        /* Navigation Tabs */
-        .nav-tabs {
-            display: flex;
-            background: var(--card-bg);
-            margin: 0 20px 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .nav-tab {
-            flex: 1;
-            padding: 15px;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .nav-tab.active {
-            color: var(--primary-color);
-            background: rgba(0, 136, 204, 0.1);
-        }
-
-        .nav-tab i {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-
-        /* Content Sections */
-        .content-section {
-            display: none;
-            padding: 0 20px 20px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Ad Card */
-        .ad-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .ad-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-
-        .ad-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .ad-reward {
-            background: linear-gradient(135deg, var(--success-color), #66bb6a);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .ad-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        .ad-description {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-
-        .watch-ad-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .watch-ad-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
-        }
-
-        .watch-ad-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Ad Modal */
-        .ad-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .ad-modal.active {
-            display: flex;
-        }
-
-        .ad-content {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .ad-timer {
-            font-size: 48px;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin: 20px 0;
-        }
-
-        .ad-progress {
-            width: 100%;
-            height: 6px;
-            background: var(--border-color);
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .ad-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            transition: width 1s linear;
-        }
-
-        .skip-ad-btn {
-            padding: 10px 20px;
-            background: var(--border-color);
-            color: var(--text-secondary);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .skip-ad-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Withdraw Section */
-        .withdraw-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: var(--shadow);
-        }
-
-        .withdraw-method {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .withdraw-method:hover {
-            border-color: var(--primary-color);
-            background: rgba(0, 136, 204, 0.05);
-        }
-
-        .withdraw-method.selected {
-            border-color: var(--primary-color);
-            background: rgba(0, 136, 204, 0.1);
-        }
-
-        .withdraw-method i {
-            font-size: 24px;
-            color: var(--primary-color);
-            margin-right: 15px;
-        }
-
-        .withdraw-info {
-            flex: 1;
-        }
-
-        .withdraw-info h4 {
-            font-size: 16px;
-            margin-bottom: 3px;
-        }
-
-        .withdraw-info p {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .withdraw-form {
-            margin-top: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--text-primary);
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
-            transition: var(--transition);
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .withdraw-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, var(--success-color), #66bb6a);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .withdraw-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-        }
-
-        .withdraw-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-
-        .stat-icon {
-            font-size: 24px;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .stat-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        /* History List */
-        .history-list {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: var(--shadow);
-        }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .history-info h4 {
-            font-size: 14px;
-            margin-bottom: 3px;
-        }
-
-        .history-info p {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .history-amount {
-            font-weight: bold;
-        }
-
-        .history-amount.credit {
-            color: var(--success-color);
-        }
-
-        .history-amount.debit {
-            color: var(--danger-color);
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--dark-bg);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-size: 14px;
-            box-shadow: var(--shadow);
-            z-index: 2000;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .balance-amount {
-                font-size: 28px;
-            }
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <div class="telegram-app">
-        <!-- Header -->
-        <header class="header">
-            <div class="user-info">
-                <img id="userAvatar" class="user-avatar" src="https://picsum.photos/seed/avatar/100/100" alt="User Avatar">
-                <div class="user-details">
-                    <h2 id="userName">Loading...</h2>
-                    <p id="userHandle">@username</p>
-                </div>
-            </div>
-        </header>
 
-        <!-- Balance Card -->
-        <div class="balance-card">
-            <div class="balance-label">Available Balance</div>
-            <div class="balance-amount" id="balanceAmount">0.00</div>
-            <div class="balance-currency">USD</div>
-        </div>
-
-        <!-- Navigation Tabs -->
-        <div class="nav-tabs">
-            <button class="nav-tab active" onclick="switchTab('home')">
-                <i class="fas fa-home"></i>
-                Home
-            </button>
-            <button class="nav-tab" onclick="switchTab('ads')">
-                <i class="fas fa-ad"></i>
-                Ads
-            </button>
-            <button class="nav-tab" onclick="switchTab('withdraw')">
-                <i class="fas fa-wallet"></i>
-                Withdraw
-            </button>
-            <button class="nav-tab" onclick="switchTab('history')">
-                <i class="fas fa-history"></i>
-                History
-            </button>
-        </div>
-
-        <!-- Home Section -->
-        <section id="home" class="content-section active">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <div class="stat-value" id="adsWatched">0</div>
-                    <div class="stat-label">Ads Watched</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <div class="stat-value" id="totalEarned">$0.00</div>
-                    <div class="stat-label">Total Earned</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
-                    <div class="stat-value" id="todayEarned">$0.00</div>
-                    <div class="stat-label">Today's Earnings</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="stat-value" id="userLevel">1</div>
-                    <div class="stat-label">Level</div>
-                </div>
-            </div>
-
-            <div class="ad-card">
-                <div class="ad-header">
-                    <h3>Quick Ad</h3>
-                    <span class="ad-reward">+$0.05</span>
-                </div>
-                <div class="ad-title">Watch & Earn Instantly</div>
-                <div class="ad-description">Watch a 15-second advertisement and earn $0.05 instantly. No limits!</div>
-                <button class="watch-ad-btn" onclick="startAdWatch('quick')">
-                    <i class="fas fa-play"></i>
-                    Watch Ad Now
-                </button>
-            </div>
-        </section>
-
-        <!-- Ads Section -->
-        <section id="ads" class="content-section">
-            <div class="ad-card">
-                <div class="ad-header">
-                    <h3>Premium Ad</h3>
-                    <span class="ad-reward">+$0.10</span>
-                </div>
-                <div class="ad-title">Monitack Premium Advertisement</div>
-                <div class="ad-description">Watch our premium partner advertisement and earn double rewards!</div>
-                <button class="watch-ad-btn" onclick="startAdWatch('premium')">
-                    <i class="fas fa-star"></i>
-                    Watch Premium Ad
-                </button>
-            </div>
-
-            <div class="ad-card">
-                <div class="ad-header">
-                    <h3>Gaming Ad</h3>
-                    <span class="ad-reward">+$0.08</span>
-                </div>
-                <div class="ad-title">New Game Release</div>
-                <div class="ad-description">Check out the latest mobile game and get rewarded!</div>
-                <button class="watch-ad-btn" onclick="startAdWatch('gaming')">
-                    <i class="fas fa-gamepad"></i>
-                    Watch Gaming Ad
-                </button>
-            </div>
-
-            <div class="ad-card">
-                <div class="ad-header">
-                    <h3>Shopping Ad</h3>
-                    <span class="ad-reward">+$0.06</span>
-                </div>
-                <div class="ad-title">Special Offers</div>
-                <div class="ad-description">Discover amazing deals and earn rewards!</div>
-                <button class="watch-ad-btn" onclick="startAdWatch('shopping')">
-                    <i class="fas fa-shopping-cart"></i>
-                    Watch Shopping Ad
-                </button>
-            </div>
-        </section>
-
-        <!-- Withdraw Section -->
-        <section id="withdraw" class="content-section">
-            <div class="withdraw-card">
-                <h3 style="margin-bottom: 15px;">Select Withdrawal Method</h3>
-                
-                <div class="withdraw-method" onclick="selectWithdrawMethod(this, 'telegram')">
-                    <i class="fab fa-telegram"></i>
-                    <div class="withdraw-info">
-                        <h4>Telegram Stars</h4>
-                        <p>Instant withdrawal to Telegram Stars</p>
-                    </div>
-                </div>
-
-                <div class="withdraw-method" onclick="selectWithdrawMethod(this, 'paypal')">
-                    <i class="fab fa-paypal"></i>
-                    <div class="withdraw-info">
-                        <h4>PayPal</h4>
-                        <p>Withdraw to PayPal account</p>
-                    </div>
-                </div>
-
-                <div class="withdraw-method" onclick="selectWithdrawMethod(this, 'bank')">
-                    <i class="fas fa-university"></i>
-                    <div class="withdraw-info">
-                        <h4>Bank Transfer</h4>
-                        <p>Direct bank transfer (Min: $10)</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="withdraw-card">
-                <h3 style="margin-bottom: 15px;">Withdrawal Details</h3>
-                <form class="withdraw-form" onsubmit="processWithdrawal(event)">
-                    <div class="form-group">
-                        <label for="withdrawAmount">Amount (USD)</label>
-                        <input type="number" id="withdrawAmount" min="1" step="0.01" placeholder="Enter amount" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="withdrawAddress">Withdrawal Address</label>
-                        <input type="text" id="withdrawAddress" placeholder="Enter your withdrawal address" required>
-                    </div>
-                    <button type="submit" class="withdraw-btn" id="withdrawBtn">
-                        <i class="fas fa-paper-plane"></i> Process Withdrawal
-                    </button>
-                </form>
-            </div>
-
-            <div class="withdraw-card">
-                <h3 style="margin-bottom: 10px;">Withdrawal Info</h3>
-                <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.5;">
-                    • Minimum withdrawal: $1.00<br>
-                    • Processing time: 24-48 hours<br>
-                    • Fee: 2% of withdrawal amount<br>
-                    • Daily limit: $50.00
-                </p>
-            </div>
-        </section>
-
-        <!-- History Section -->
-        <section id="history" class="content-section">
-            <div class="history-list">
-                <h3 style="margin-bottom: 15px;">Transaction History</h3>
-                <div id="historyList">
-                    <!-- History items will be added here -->
-                </div>
-            </div>
-        </section>
-
-        <!-- Ad Modal -->
-        <div class="ad-modal" id="adModal">
-            <div class="ad-content">
-                <h3>Watching Advertisement</h3>
-                <div class="ad-timer" id="adTimer">15</div>
-                <div class="ad-progress">
-                    <div class="ad-progress-bar" id="adProgressBar"></div>
-                </div>
-                <p style="color: var(--text-secondary); margin-bottom: 15px;">Please wait until the timer completes</p>
-                <button class="skip-ad-btn" id="skipAdBtn" disabled onclick="skipAd()">
-                    Skip Ad (<span id="skipCountdown">5</span>s)
-                </button>
-            </div>
-        </div>
-
-        <!-- Toast Notification -->
-        <div class="toast" id="toast"></div>
+    <div id="info">
+        <div>স্বাস্থ্য: <span id="health">100</span></div>
+        <div>স্কোর: <span id="score">0</span></div>
     </div>
 
+    <canvas id="gameCanvas" width="900" height="600"></canvas>
+
     <script>
-        // Initialize Telegram Web App
-        let tg;
-        let user = null;
-        let balance = 0.00;
-        let adsWatched = 0;
-        let totalEarned = 0.00;
-        let todayEarned = 0.00;
-        let userLevel = 1;
-        let selectedWithdrawMethod = null;
-        let adTimer = null;
-        let skipTimer = null;
-        let transactionHistory = [];
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            initTelegramApp();
-            loadUserData();
-            updateUI();
-            generateHistory();
+        // --- গেমের অবস্থা (Game State) ---
+        let gameOver = false;
+        let score = 0;
+
+        // --- প্লেয়ার ---
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            width: 30,
+            height: 30,
+            speed: 5,
+            health: 100,
+            color: '#00ff00' // সবুজ রঙ
+        };
+
+        // --- ইনপুট হ্যান্ডলিং (কিবোর্ড ও মাউস) ---
+        const keys = {};
+        let mouseX = 0, mouseY = 0;
+
+        document.addEventListener('keydown', (e) => keys[e.key.toLowerCase()] = true);
+        document.addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
         });
 
-        // Initialize Telegram Web App
-        function initTelegramApp() {
-            if (window.Telegram) {
-                tg = window.Telegram.WebApp;
-                tg.ready();
-                tg.expand();
-                
-                // Get user data
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    user = tg.initDataUnsafe.user;
-                    document.getElementById('userName').textContent = user.first_name + ' ' + (user.last_name || '');
-                    document.getElementById('userHandle').textContent = '@' + user.username;
-                    
-                    // Set user avatar if available
-                    if (user.photo_url) {
-                        document.getElementById('userAvatar').src = user.photo_url;
+        // --- গুলি (Bullets) ---
+        const bullets = [];
+        class Bullet {
+            constructor(x, y, angle) {
+                this.x = x;
+                this.y = y;
+                this.width = 5;
+                this.height = 5;
+                this.speed = 10;
+                this.angle = angle;
+                this.dx = Math.cos(angle) * this.speed;
+                this.dy = Math.sin(angle) * this.speed;
+                this.color = '#ffff00'; // হলুদ রঙ
+            }
+            update() {
+                this.x += this.dx;
+                this.y += this.dy;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+            }
+            isOffScreen() {
+                return this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height;
+            }
+        }
+
+        // --- শত্রু (Enemies) ---
+        const enemies = [];
+        class Enemy {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 25;
+                this.height = 25;
+                this.speed = 1.5;
+                this.health = 30;
+                this.color = '#ff0000'; // লাল রঙ
+            }
+            update() {
+                // সহজ AI: শত্রু সরাসরি প্লেয়ারের দিকে যায়
+                const angle = Math.atan2(player.y - this.y, player.x - this.x);
+                this.x += Math.cos(angle) * this.speed;
+                this.y += Math.sin(angle) * this.speed;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+                // স্বাস্থ্য বার
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2 - 10, this.width, 3);
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(this.x - this.width / 2, this.y - this.height / 2 - 10, this.width * (this.health / 30), 3);
+            }
+            takeDamage(damage) {
+                this.health -= damage;
+            }
+        }
+
+        // --- বাড়িঘর (Buildings) ---
+        const buildings = [
+            { x: 100, y: 100, width: 150, height: 100, color: '#8B4513' }, // বাদামী রঙ
+            { x: 650, y: 400, width: 200, height: 150, color: '#696969' }, // ধূসর রঙ
+            { x: 400, y: 50, width: 100, height: 120, color: '#8B4513' },
+            { x: 50, y: 450, width: 120, height: 100, color: '#696969' }
+        ];
+
+        // --- মাটিতে পড়ে থাকা অস্ত্র (Guns on Ground) ---
+        const guns = [
+            { x: 150, y: 150, width: 20, height: 10, color: '#ffa500', name: 'Pistol' }, // কমলা রঙ
+            { x: 700, y: 450, width: 25, height: 12, color: '#ff00ff', name: 'Rifle' } // ম্যাজেন্টা রঙ
+        ];
+
+        // --- কলিশন ডিটেকশন (Collision Detection) ---
+        function rectCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        // --- গেম লজিক ---
+        function updatePlayer() {
+            let dx = 0;
+            let dy = 0;
+            if (keys['w'] || keys['arrowup']) dy = -player.speed;
+            if (keys['s'] || keys['arrowdown']) dy = player.speed;
+            if (keys['a'] || keys['arrowleft']) dx = -player.speed;
+            if (keys['d'] || keys['arrowright']) dx = player.speed;
+
+            const nextX = player.x + dx;
+            const nextY = player.y + dy;
+
+            // বাড়িঘরের সাথে কলিশন চেক
+            let canMove = true;
+            const futurePlayer = { x: nextX - player.width / 2, y: nextY - player.height / 2, width: player.width, height: player.height };
+            for (const building of buildings) {
+                if (rectCollision(futurePlayer, building)) {
+                    canMove = false;
+                    break;
+                }
+            }
+
+            if (canMove) {
+                player.x = nextX;
+                player.y = nextY;
+            }
+            
+            // ক্যানভাসের বাইরে যেতে না দেওয়া
+            player.x = Math.max(player.width / 2, Math.min(canvas.width - player.width / 2, player.x));
+            player.y = Math.max(player.height / 2, Math.min(canvas.height - player.height / 2, player.y));
+        }
+
+        function shoot() {
+            if (gameOver) return;
+            const angle = Math.atan2(mouseY - player.y, mouseX - player.x);
+            bullets.push(new Bullet(player.x, player.y, angle));
+        }
+        canvas.addEventListener('click', shoot);
+
+        function spawnEnemy() {
+            if (gameOver) return;
+            const side = Math.floor(Math.random() * 4);
+            let x, y;
+            if (side === 0) { x = Math.random() * canvas.width; y = -30; }
+            else if (side === 1) { x = canvas.width + 30; y = Math.random() * canvas.height; }
+            else if (side === 2) { x = Math.random() * canvas.width; y = canvas.height + 30; }
+            else { x = -30; y = Math.random() * canvas.height; }
+            enemies.push(new Enemy(x, y));
+        }
+        setInterval(spawnEnemy, 2000); // প্রতি ২ সেকেন্ডে একটি শত্রু আসবে
+
+        // --- ড্রয়িং ফাংশন ---
+        function draw() {
+            // ক্যানভাস পরিষ্কার
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // বাড়িঘর আঁকা
+            ctx.fillStyle = '#8B4513'; // একটা ডিফল্ট রঙ
+            for (const building of buildings) {
+                ctx.fillStyle = building.color;
+                ctx.fillRect(building.x, building.y, building.width, building.height);
+            }
+
+            // মাটিতে পড়ে থাকা অস্ত্র আঁকা
+            for (const gun of guns) {
+                ctx.fillStyle = gun.color;
+                ctx.fillRect(gun.x - gun.width / 2, gun.y - gun.height / 2, gun.width, gun.height);
+            }
+
+            // প্লেয়ার আঁকা
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x - player.width / 2, player.y - player.height / 2, player.width, player.height);
+            
+            // প্লেয়ারের দিকে একটি লাইন আঁকা (আইমিং এর জন্য)
+            ctx.strokeStyle = 'white';
+            ctx.beginPath();
+            ctx.moveTo(player.x, player.y);
+            const aimLength = 50;
+            const angle = Math.atan2(mouseY - player.y, mouseX - player.x);
+            ctx.lineTo(player.x + Math.cos(angle) * aimLength, player.y + Math.sin(angle) * aimLength);
+            ctx.stroke();
+
+
+            // শত্রু আঁকা
+            for (const enemy of enemies) {
+                enemy.draw();
+            }
+
+            // গুলি আঁকা
+            for (const bullet of bullets) {
+                bullet.draw();
+            }
+
+            // UI আপডেট
+            document.getElementById('health').textContent = player.health;
+            document.getElementById('score').textContent = score;
+
+            // গেম ওভার স্ক্রিন
+            if (gameOver) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'white';
+                ctx.font = '60px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('গেম ওভার!', canvas.width / 2, canvas.height / 2 - 30);
+                ctx.font = '30px Arial';
+                ctx.fillText(`আপনার স্কোর: ${score}`, canvas.width / 2, canvas.height / 2 + 20);
+            }
+        }
+
+        // --- মূল গেম লুপ ---
+        function gameLoop() {
+            if (!gameOver) {
+                updatePlayer();
+
+                // গুলি আপডেট
+                for (let i = bullets.length - 1; i >= 0; i--) {
+                    bullets[i].update();
+                    if (bullets[i].isOffScreen()) {
+                        bullets.splice(i, 1);
+                        continue;
                     }
-                } else {
-                    // Fallback for testing
-                    document.getElementById('userName').textContent = 'Test User';
-                    document.getElementById('userHandle').textContent = '@testuser';
+
+                    // গুলি বনাম বাড়িঘর
+                    let hitBuilding = false;
+                    for (const building of buildings) {
+                        if (rectCollision(bullets[i], building)) {
+                            hitBuilding = true;
+                            break;
+                        }
+                    }
+                    if (hitBuilding) {
+                        bullets.splice(i, 1);
+                        continue;
+                    }
+
+                    // গুলি বনাম শত্রু
+                    for (let j = enemies.length - 1; j >= 0; j--) {
+                        if (rectCollision(bullets[i], enemies[j])) {
+                            enemies[j].takeDamage(10);
+                            bullets.splice(i, 1);
+                            if (enemies[j].health <= 0) {
+                                enemies.splice(j, 1);
+                                score += 10;
+                            }
+                            break;
+                        }
+                    }
                 }
-            } else {
-                // Fallback for testing outside Telegram
-                document.getElementById('userName').textContent = 'Test User';
-                document.getElementById('userHandle').textContent = '@testuser';
-            }
-        }
 
-        // Load user data from localStorage
-        function loadUserData() {
-            const savedData = localStorage.getItem('adEarnData');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                balance = data.balance || 0.00;
-                adsWatched = data.adsWatched || 0;
-                totalEarned = data.totalEarned || 0.00;
-                todayEarned = data.todayEarned || 0.00;
-                userLevel = data.userLevel || 1;
-                transactionHistory = data.transactionHistory || [];
-                
-                // Reset daily earnings if it's a new day
-                const lastVisit = localStorage.getItem('lastVisit');
-                const today = new Date().toDateString();
-                if (lastVisit !== today) {
-                    todayEarned = 0.00;
-                    localStorage.setItem('lastVisit', today);
-                }
-            }
-        }
-
-        // Save user data to localStorage
-        function saveUserData() {
-            const data = {
-                balance,
-                adsWatched,
-                totalEarned,
-                todayEarned,
-                userLevel,
-                transactionHistory
-            };
-            localStorage.setItem('adEarnData', JSON.stringify(data));
-        }
-
-        // Update UI elements
-        function updateUI() {
-            document.getElementById('balanceAmount').textContent = balance.toFixed(2);
-            document.getElementById('adsWatched').textContent = adsWatched;
-            document.getElementById('totalEarned').textContent = '$' + totalEarned.toFixed(2);
-            document.getElementById('todayEarned').textContent = '$' + todayEarned.toFixed(2);
-            document.getElementById('userLevel').textContent = userLevel;
-            
-            // Update user level based on ads watched
-            const newLevel = Math.floor(adsWatched / 10) + 1;
-            if (newLevel !== userLevel) {
-                userLevel = newLevel;
-                showToast(`🎉 Congratulations! You've reached Level ${userLevel}!`);
-            }
-        }
-
-        // Switch between tabs
-        function switchTab(tabName) {
-            // Update tab buttons
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.closest('.nav-tab').classList.add('active');
-            
-            // Update content sections
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(tabName).classList.add('active');
-        }
-
-        // Start watching an ad
-        function startAdWatch(adType) {
-            const rewards = {
-                'quick': 0.05,
-                'premium': 0.10,
-                'gaming': 0.08,
-                'shopping': 0.06
-            };
-            
-            const reward = rewards[adType] || 0.05;
-            showAdModal(reward);
-        }
-
-        // Show ad modal
-        function showAdModal(reward) {
-            const modal = document.getElementById('adModal');
-            const timer = document.getElementById('adTimer');
-            const progressBar = document.getElementById('adProgressBar');
-            const skipBtn = document.getElementById('skipAdBtn');
-            const skipCountdown = document.getElementById('skipCountdown');
-            
-            modal.classList.add('active');
-            let timeLeft = 15;
-            let skipTimeLeft = 5;
-            
-            // Disable skip button initially
-            skipBtn.disabled = true;
-            
-            // Main ad timer
-            adTimer = setInterval(() => {
-                timeLeft--;
-                timer.textContent = timeLeft;
-                progressBar.style.width = ((15 - timeLeft) / 15 * 100) + '%';
-                
-                if (timeLeft <= 0) {
-                    completeAdWatch(reward);
-                }
-            }, 1000);
-            
-            // Skip button countdown
-            skipTimer = setInterval(() => {
-                skipTimeLeft--;
-                skipCountdown.textContent = skipTimeLeft;
-                
-                if (skipTimeLeft <= 0) {
-                    skipBtn.disabled = false;
-                    clearInterval(skipTimer);
-                }
-            }, 1000);
-        }
-
-        // Complete ad watching
-        function completeAdWatch(reward) {
-            clearInterval(adTimer);
-            clearInterval(skipTimer);
-            
-            // Update balance and stats
-            balance += reward;
-            totalEarned += reward;
-            todayEarned += reward;
-            adsWatched++;
-            
-            // Add to transaction history
-            addTransaction('Ad Watched', reward, 'credit');
-            
-            // Update UI and save data
-            updateUI();
-            saveUserData();
-            
-            // Close modal
-            document.getElementById('adModal').classList.remove('active');
-            
-            // Show success message
-            showToast(`✅ Earned $${reward.toFixed(2)}!`);
-            
-            // Haptic feedback if available
-            if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-        }
-
-        // Skip ad
-        function skipAd() {
-            clearInterval(adTimer);
-            clearInterval(skipTimer);
-            document.getElementById('adModal').classList.remove('active');
-            showToast('Ad skipped - no rewards earned');
-        }
-
-        // Select withdrawal method
-        function selectWithdrawMethod(element, method) {
-            document.querySelectorAll('.withdraw-method').forEach(el => {
-                el.classList.remove('selected');
-            });
-            element.classList.add('selected');
-            selectedWithdrawMethod = method;
-        }
-
-        // Process withdrawal
-        function processWithdrawal(event) {
-            event.preventDefault();
-            
-            if (!selectedWithdrawMethod) {
-                showToast('⚠️ Please select a withdrawal method');
-                return;
-            }
-            
-            const amount = parseFloat(document.getElementById('withdrawAmount').value);
-            const address = document.getElementById('withdrawAddress').value;
-            
-            if (amount < 1) {
-                showToast('⚠️ Minimum withdrawal is $1.00');
-                return;
-            }
-            
-            if (amount > balance) {
-                showToast('⚠️ Insufficient balance');
-                return;
-            }
-            
-            // Calculate fee (2%)
-            const fee = amount * 0.02;
-            const totalAmount = amount + fee;
-            
-            if (totalAmount > balance) {
-                showToast('⚠️ Insufficient balance for withdrawal + fee');
-                return;
-            }
-            
-            // Process withdrawal
-            balance -= totalAmount;
-            
-            // Add to transaction history
-            addTransaction(`Withdrawal to ${selectedWithdrawMethod}`, amount, 'debit');
-            addTransaction('Withdrawal Fee', fee, 'debit');
-            
-            // Update UI and save data
-            updateUI();
-            saveUserData();
-            
-            // Show success message
-            showToast(`✅ Withdrawal of $${amount.toFixed(2)} processed!`);
-            
-            // Reset form
-            event.target.reset();
-            document.querySelectorAll('.withdraw-method').forEach(el => {
-                el.classList.remove('selected');
-            });
-            selectedWithdrawMethod = null;
-            
-            // Haptic feedback
-            if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-        }
-
-        // Add transaction to history
-        function addTransaction(description, amount, type) {
-            const transaction = {
-                id: Date.now(),
-                description,
-                amount,
-                type,
-                date: new Date().toISOString()
-            };
-            
-            transactionHistory.unshift(transaction);
-            
-            // Keep only last 50 transactions
-            if (transactionHistory.length > 50) {
-                transactionHistory = transactionHistory.slice(0, 50);
-            }
-            
-            updateHistoryDisplay();
-        }
-
-        // Update history display
-        function updateHistoryDisplay() {
-            const historyList = document.getElementById('historyList');
-            
-            if (transactionHistory.length === 0) {
-                historyList.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No transactions yet</p>';
-                return;
-            }
-            
-            historyList.innerHTML = transactionHistory.slice(0, 20).map(transaction => {
-                const date = new Date(transaction.date);
-                const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                
-                return `
-                    <div class="history-item">
-                        <div class="history-info">
-                            <h4>${transaction.description}</h4>
-                            <p>${dateStr} at ${timeStr}</p>
-                        </div>
-                        <div class="history-amount ${transaction.type}">
-                            ${transaction.type === 'credit' ? '+' : '-'}$${Math.abs(transaction.amount).toFixed(2)}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Generate sample history for demo
-        function generateHistory() {
-            if (transactionHistory.length === 0) {
-                // Add some sample transactions
-                addTransaction('Welcome Bonus', 0.50, 'credit');
-                addTransaction('First Ad Watched', 0.05, 'credit');
-            }
-            updateHistoryDisplay();
-        }
-
-        // Show toast notification
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // Handle visibility change (app background/foreground)
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                // App went to background
-                if (adTimer) {
-                    clearInterval(adTimer);
-                    clearInterval(skipTimer);
-                    document.getElementById('adModal').classList.remove('active');
-                    showToast('⚠️ Ad viewing cancelled');
+                // শত্রু আপডেট
+                for (const enemy of enemies) {
+                    enemy.update();
+                    // শত্রু বনাম প্লেয়ার
+                    if (rectCollision(enemy, player)) {
+                        player.health -= 1;
+                        if (player.health <= 0) {
+                            gameOver = true;
+                        }
+                    }
                 }
             }
-        });
 
-        // Prevent back button issues
-        window.addEventListener('popstate', function(event) {
-            if (tg && tg.BackButton) {
-                tg.BackButton.hide();
-            }
-        });
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const modal = document.getElementById('adModal');
-                if (modal.classList.contains('active')) {
-                    skipAd();
-                }
-            }
-        });
+        // --- গেম শুরু ---
+        gameLoop();
+
     </script>
 </body>
 </html>
