@@ -164,75 +164,6 @@
             padding: 0 20px;
         }
 
-        /* Home Section */
-        .home-hero {
-            text-align: center;
-            padding: 4rem 0;
-            background: rgba(15, 15, 15, 0.5);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            margin-bottom: 3rem;
-        }
-
-        .home-hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, var(--accent), var(--warning));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: glow 2s ease-in-out infinite;
-        }
-
-        @keyframes glow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.2); }
-        }
-
-        .rules-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .rule-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 15px;
-            padding: 2rem;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .rule-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            animation: rotate 10s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .rule-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .rule-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: var(--warning);
-        }
-
         /* Game Section - Professional Aviator */
         .game-container {
             display: grid;
@@ -242,7 +173,7 @@
         }
 
         .game-main {
-            background: rgba(15, 15, 15, 0.9);
+            background: rgba(15, 15, 15, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 2rem;
@@ -258,74 +189,132 @@
             box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
         }
 
-        .stars {
+        /* Grid System */
+        .grid-system {
             position: absolute;
             width: 100%;
             height: 100%;
             background-image: 
-                radial-gradient(2px 2px at 20px 30px, white, transparent),
-                radial-gradient(2px 2px at 40px 70px, white, transparent),
-                radial-gradient(1px 1px at 50px 50px, white, transparent),
-                radial-gradient(1px 1px at 80px 10px, white, transparent),
-                radial-gradient(2px 2px at 130px 80px, white, transparent);
-            background-repeat: repeat;
-            background-size: 200px 200px;
-            animation: stars 20s linear infinite;
-            opacity: 0.5;
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
         }
 
-        @keyframes stars {
-            from { transform: translateY(0); }
-            to { transform: translateY(-200px); }
+        /* Axis Labels */
+        .axis-labels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
         }
 
+        .x-label {
+            position: absolute;
+            bottom: 5px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .y-label {
+            position: absolute;
+            left: 5px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Multiplier Curve */
+        .multiplier-curve {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .curve-path {
+            stroke: #ff6b6b;
+            stroke-width: 3;
+            fill: none;
+            filter: drop-shadow(0 0 10px rgba(255, 107, 107, 0.5));
+        }
+
+        .curve-fill {
+            fill: url(#curveGradient);
+            opacity: 0.1;
+        }
+
+        /* Plane */
         .plane-container {
             position: absolute;
-            left: 50px;
-            bottom: 50px;
+            width: 60px;
+            height: 60px;
             transition: all 0.1s linear;
             z-index: 10;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
         }
 
         .plane {
-            font-size: 50px;
-            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
-            animation: float 2s ease-in-out infinite;
+            font-size: 40px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: planeFloat 2s ease-in-out infinite;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes planeFloat {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
         }
 
-        .plane-trail {
+        /* Trail Effect */
+        .trail-particle {
             position: absolute;
             width: 4px;
-            background: linear-gradient(to top, transparent, rgba(255, 107, 107, 0.8), rgba(255, 107, 107, 0.4), transparent);
-            transform-origin: bottom;
-            left: 25px;
-            bottom: 25px;
-            border-radius: 2px;
-            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+            height: 4px;
+            background: radial-gradient(circle, rgba(255, 107, 107, 0.8), transparent);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: trailFade 1s ease-out forwards;
         }
 
+        @keyframes trailFade {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+        }
+
+        /* Multiplier Display */
         .multiplier-display {
             position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 5rem;
+            top: 20px;
+            right: 20px;
+            font-size: 3rem;
             font-weight: bold;
             text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
-            z-index: 5;
-            animation: pulse 1s ease-in-out infinite;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.05); }
+        .multiplier-display.crashed {
+            color: #ff6b6b;
+            animation: crashPulse 0.5s ease-in-out;
         }
 
+        @keyframes crashPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Game Sidebar */
         .game-sidebar {
             display: flex;
             flex-direction: column;
@@ -333,7 +322,7 @@
         }
 
         .bet-panel {
-            background: rgba(15, 15, 15, 0.9);
+            background: rgba(15, 15, 15, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
@@ -447,8 +436,9 @@
             50% { box-shadow: 0 0 40px rgba(78, 205, 196, 0.8); }
         }
 
+        /* History Panel */
         .history-panel {
-            background: rgba(15, 15, 15, 0.9);
+            background: rgba(15, 15, 15, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
@@ -474,14 +464,114 @@
         .history-item.medium { background: rgba(247, 183, 49, 0.3); }
         .history-item.high { background: rgba(78, 205, 196, 0.3); }
 
-        /* Withdraw Section */
+        /* Live Bets */
+        .live-bets-container {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .live-bet-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--glass);
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Other Sections (Home, Rules, About, Withdraw) - keeping them the same */
+        .home-hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: rgba(15, 15, 15, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-bottom: 3rem;
+        }
+
+        .home-hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent), var(--warning));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        .rules-container, .about-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .rule-card, .about-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rule-card::before, .about-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .rule-card:hover, .about-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .rule-icon, .about-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--warning);
+        }
+
         .withdraw-container {
             max-width: 800px;
             margin: 0 auto;
         }
 
         .withdraw-form {
-            background: rgba(15, 15, 15, 0.9);
+            background: rgba(15, 15, 15, 0.95);
             backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
@@ -566,35 +656,6 @@
             box-shadow: 0 10px 30px rgba(78, 205, 196, 0.4);
         }
 
-        /* About Section */
-        .about-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .about-card {
-            background: rgba(15, 15, 15, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .about-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .about-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--warning);
-        }
-
         /* Notification */
         .notification {
             position: fixed;
@@ -626,36 +687,30 @@
             border-left: 4px solid var(--warning);
         }
 
-        /* Live Bets */
-        .live-bets-container {
+        /* Sound Toggle */
+        .sound-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             background: rgba(15, 15, 15, 0.9);
             backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .live-bet-item {
+            border: 2px solid var(--glass-border);
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 1rem;
-            background: var(--glass);
-            border-radius: 10px;
-            margin-bottom: 0.5rem;
-            animation: slideIn 0.5s;
+            justify-content: center;
+            transition: all 0.3s;
+            z-index: 1000;
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .sound-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         /* Responsive */
@@ -687,47 +742,10 @@
             .history-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
-        }
 
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--light);
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Sound Toggle */
-        .sound-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: rgba(15, 15, 15, 0.9);
-            backdrop-filter: blur(20px);
-            border: 2px solid var(--glass-border);
-            color: var(--light);
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            z-index: 1000;
-        }
-
-        .sound-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            .multiplier-display {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
@@ -811,87 +829,36 @@
         </div>
     </section>
 
-    <!-- Rules Section -->
-    <section id="rules" class="section">
-        <div class="container">
-            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem;">
-                <i class="fas fa-book"></i> সম্পূর্ণ নিয়মাবলী
-            </h2>
-            
-            <div class="rules-container">
-                <div class="rule-card">
-                    <h3><i class="fas fa-play-circle"></i> গেম শুরু</h3>
-                    <ul style="text-align: left; line-height: 2;">
-                        <li>প্রতিটি রাউন্ড শুরু হওয়ার আগে আপনার বাজি নির্ধারণ করুন</li>
-                        <li>বাজি ধরার পর গেম স্বয়ংক্রিয়ভাবে শুরু হবে</li>
-                        <li>বিমানটি উড়া শুরু করলে মাল্টিপ্লায়ার বাড়তে থাকবে</li>
-                    </ul>
-                </div>
-                
-                <div class="rule-card">
-                    <h3><i class="fas fa-hand-paper"></i> ক্যাশআউট নিয়ম</h3>
-                    <ul style="text-align: left; line-height: 2;">
-                        <li>যেকোনো সময় ক্যাশআউট করতে পারেন</li>
-                        <li>ক্যাশআউট করলে বর্তমান মাল্টিপ্লায়ার অনুযায়ী জিতবেন</li>
-                        <li>ক্যাশআউট না করলে ক্র্যাশ হলে সব হারাবেন</li>
-                        <li>অটো ক্যাশআউট সেট করতে পারেন</li>
-                    </ul>
-                </div>
-                
-                <div class="rule-card">
-                    <h3><i class="fas fa-money-check-alt"></i> লেনদেন</h3>
-                    <ul style="text-align: left; line-height: 2;">
-                        <li>সর্বনিম্ন ডিপোজিট: ৳100</li>
-                        <li>সর্বনিম্ন উইথড্র: ৳1</li>
-                        <li>উইথড্র প্রসেসিং সময়: ২৪ ঘন্টা</li>
-                        <li>সকল লেনদেন নিরাপদ</li>
-                    </ul>
-                </div>
-                
-                <div class="rule-card">
-                    <h3><i class="fas fa-exclamation-triangle"></i> সতর্কতা</h3>
-                    <ul style="text-align: left; line-height: 2;">
-                        <li>গেমটি শুধুমাত্র ১৮+ ব্যক্তিদের জন্য</li>
-                        <li>দায়িত্বের সাথে খেলুন</li>
-                        <li>যা হারাতে পারেন তার বেশি বাজি ধরবেন না</li>
-                        <li>আসক্তি এড়িয়ে চলুন</li>
-                    </ul>
-                </div>
-                
-                <div class="rule-card">
-                    <h3><i class="fas fa-gift"></i> বোনাস শর্তাবলী</h3>
-                    <ul style="text-align: left; line-height: 2;">
-                        <li>ওয়েলকাম বোনাস: প্রথম ডিপোজিটে ১০০%</li>
-                        <li>রেফারেল বোনাস: ৫% আজীবন</li>
-                        <li>লয়্যালটি পয়েন্ট: প্রতি বাজিতে</li>
-                        <li>বোনাস উত্তোলনের জন্য ৩x ওয়েজারিং</li>
-                    </ul>
-                </div>
-                
-                <div class="rule-card">
-                    <h3><i class="fas fa-ban"></i> নিষিদ্ধ কার্যক্রম</h3>
-                    <ul style="text-align: left; line-height: 2;">
-                        <li>একাধিক অ্যাকাউন্ট ব্যবহার নিষিদ্ধ</li>
-                        <li>হ্যাকিং বা চিটিং করা যাবে না</li>
-                        <li>ভুয়া তথ্য দিয়ে রেজিস্ট্রেশন নিষিদ্ধ</li>
-                        <li>অন্যায় উপায়ে বোনাস গ্রহণ নিষিদ্ধ</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Game Section -->
     <section id="game" class="section">
         <div class="container">
             <div class="game-container">
                 <div class="game-main">
                     <div class="game-canvas" id="gameCanvas">
-                        <div class="stars"></div>
+                        <!-- Grid System -->
+                        <div class="grid-system"></div>
+                        
+                        <!-- Axis Labels -->
+                        <div class="axis-labels" id="axisLabels"></div>
+                        
+                        <!-- SVG for Curve -->
+                        <svg class="multiplier-curve" id="multiplierCurve">
+                            <defs>
+                                <linearGradient id="curveGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:0.5" />
+                                    <stop offset="100%" style="stop-color:#ff6b6b;stop-opacity:0" />
+                                </linearGradient>
+                            </defs>
+                            <path class="curve-fill" id="curveFill" />
+                            <path class="curve-path" id="curvePath" />
+                        </svg>
+                        
+                        <!-- Plane -->
                         <div class="plane-container" id="planeContainer">
-                            <div class="plane" id="plane">✈️</div>
-                            <div class="plane-trail" id="planeTrail"></div>
+                            <div class="plane">✈️</div>
                         </div>
+                        
+                        <!-- Multiplier Display -->
                         <div class="multiplier-display" id="multiplierDisplay">1.00x</div>
                     </div>
                     
@@ -933,6 +900,76 @@
                         <h3><i class="fas fa-history"></i> ইতিহাস</h3>
                         <div class="history-grid" id="historyGrid"></div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rules Section -->
+    <section id="rules" class="section">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem;">
+                <i class="fas fa-book"></i> সম্পূর্ণ নিয়মাবলী
+            </h2>
+            
+            <div class="rules-container">
+                <div class="rule-card">
+                    <h3><i class="fas fa-play-circle"></i> গেম শুরু</h3>
+                    <ul style="text-align: left; line-height: 2;">
+                        <li>প্রতিটি রাউন্ড শুরু হওয়ার আগে আপনার বাজি নির্ধারণ করুন</li>
+                        <li>বাজি ধরার পর গেম স্বয়ংক্রিয়ভাবে শুরু হবে</li>
+                        <li>বিমানটি উড়া শুরু করলে মাল্টিপ্লায়ার বাড়তে থাকবে</li>
+                    </ul>
+                </div>
+                
+                <div class="rule-card">
+                    <h3><i class="fas fa-hand-paper"></i> ক্যাশআউট নিয়ম</h3>
+                    <ul style="text-align: left; line-height: 2;">
+                        <li>যেকোনো সময় ক্যাশআউট করতে পারেন</li>
+                        <li>ক্যাশআউট করলে বর্তমান মাল্টিপ্লায়ার অনুযায়ী জিতবেন</li>
+                        <li>ক্যাশআউট না করলে ক্র্যাশ হলে সব হারাবেন</li>
+                        <li>অটো ক্যাশআউট সেট করতে পারেন</li>
+                    </ul>
+                </div>
+                
+                <div class="rule-card">
+                    <h3><i class="fas fa-money-check-alt"></i> লেনদেন</h3>
+                    <ul style="text-align: left; line-height: 2;">
+                        <li>সর্বনিম্ন ডিপোজিট: ৳100</li>
+                        <li>সর্বনিম্ন উইথড্র: ৳500</li>
+                        <li>উইথড্র প্রসেসিং সময়: ২৪ ঘন্টা</li>
+                        <li>সকল লেনদেন নিরাপদ</li>
+                    </ul>
+                </div>
+                
+                <div class="rule-card">
+                    <h3><i class="fas fa-exclamation-triangle"></i> সতর্কতা</h3>
+                    <ul style="text-align: left; line-height: 2;">
+                        <li>গেমটি শুধুমাত্র ১৮+ ব্যক্তিদের জন্য</li>
+                        <li>দায়িত্বের সাথে খেলুন</li>
+                        <li>যা হারাতে পারেন তার বেশি বাজি ধরবেন না</li>
+                        <li>আসক্তি এড়িয়ে চলুন</li>
+                    </ul>
+                </div>
+                
+                <div class="rule-card">
+                    <h3><i class="fas fa-gift"></i> বোনাস শর্তাবলী</h3>
+                    <ul style="text-align: left; line-height: 2;">
+                        <li>ওয়েলকাম বোনাস: প্রথম ডিপোজিটে ১০০%</li>
+                        <li>রেফারেল বোনাস: ৫% আজীবন</li>
+                        <li>লয়্যালটি পয়েন্ট: প্রতি বাজিতে</li>
+                        <li>বোনাস উত্তোলনের জন্য ৩x ওয়েজারিং</li>
+                    </ul>
+                </div>
+                
+                <div class="rule-card">
+                    <h3><i class="fas fa-ban"></i> নিষিদ্ধ কার্যক্রম</h3>
+                    <ul style="text-align: left; line-height: 2;">
+                        <li>একাধিক অ্যাকাউন্ট ব্যবহার নিষিদ্ধ</li>
+                        <li>হ্যাকিং বা চিটিং করা যাবে না</li>
+                        <li>ভুয়া তথ্য দিয়ে রেজিস্ট্রেশন নিষিদ্ধ</li>
+                        <li>অন্যায় উপায়ে বোনাস গ্রহণ নিষিদ্ধ</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -1071,35 +1108,58 @@
             history: [],
             liveBets: [],
             selectedPayment: null,
-            gameInterval: null
+            gameInterval: null,
+            curvePoints: []
         };
 
         // Telegram Bot Token
         const TELEGRAM_BOT_TOKEN = '8341497983:AAFjG5N2SQSpY3s_7Q04IJDkTEXewfxewKs';
-        const TELEGRAM_CHAT_ID = '-1002845465196'; // Replace with your chat ID
+        const TELEGRAM_CHAT_ID = '-1002845465196';
 
         // DOM Elements
-        const plane = document.getElementById('plane');
         const planeContainer = document.getElementById('planeContainer');
-        const planeTrail = document.getElementById('planeTrail');
         const multiplierDisplay = document.getElementById('multiplierDisplay');
         const actionButton = document.getElementById('actionButton');
         const betAmountInput = document.getElementById('betAmount');
         const navBalance = document.getElementById('navBalance');
         const historyGrid = document.getElementById('historyGrid');
         const liveBetsContainer = document.getElementById('liveBetsContainer');
+        const gameCanvas = document.getElementById('gameCanvas');
+        const curvePath = document.getElementById('curvePath');
+        const curveFill = document.getElementById('curveFill');
+        const axisLabels = document.getElementById('axisLabels');
+
+        // Initialize Grid
+        function initializeGrid() {
+            axisLabels.innerHTML = '';
+            
+            // Add X-axis labels
+            for (let i = 0; i <= 10; i++) {
+                const label = document.createElement('div');
+                label.className = 'x-label';
+                label.style.left = (i * 10) + '%';
+                label.textContent = i + 's';
+                axisLabels.appendChild(label);
+            }
+            
+            // Add Y-axis labels
+            for (let i = 0; i <= 10; i++) {
+                const label = document.createElement('div');
+                label.className = 'y-label';
+                label.style.bottom = (i * 10) + '%';
+                label.textContent = (i * 2) + 'x';
+                axisLabels.appendChild(label);
+            }
+        }
 
         // Navigation
         function showSection(sectionName) {
-            // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
             
-            // Show selected section
             document.getElementById(sectionName).classList.add('active');
             
-            // Update nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
@@ -1155,6 +1215,53 @@
             return Math.round(crashPoint * 100) / 100;
         }
 
+        // Calculate plane position based on multiplier
+        function calculatePlanePosition(multiplier) {
+            const canvasWidth = gameCanvas.offsetWidth;
+            const canvasHeight = gameCanvas.offsetHeight;
+            
+            // Exponential curve calculation
+            const x = Math.min(50 + (multiplier - 1) * 80, canvasWidth - 100);
+            const y = Math.min(50 + Math.log(multiplier) * 150, canvasHeight - 100);
+            
+            return { x, y };
+        }
+
+        // Update curve path
+        function updateCurvePath() {
+            if (gameState.curvePoints.length < 2) return;
+            
+            const canvasWidth = gameCanvas.offsetWidth;
+            const canvasHeight = gameCanvas.offsetHeight;
+            
+            // Create path string
+            let pathString = `M ${gameState.curvePoints[0].x} ${canvasHeight - gameState.curvePoints[0].y}`;
+            
+            for (let i = 1; i < gameState.curvePoints.length; i++) {
+                pathString += ` L ${gameState.curvePoints[i].x} ${canvasHeight - gameState.curvePoints[i].y}`;
+            }
+            
+            // Update curve path
+            curvePath.setAttribute('d', pathString);
+            
+            // Create fill path
+            let fillString = pathString + ` L ${gameState.curvePoints[gameState.curvePoints.length - 1].x} ${canvasHeight} L 50 ${canvasHeight} Z`;
+            curveFill.setAttribute('d', fillString);
+        }
+
+        // Create trail particle
+        function createTrailParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'trail-particle';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            gameCanvas.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 1000);
+        }
+
         // Game Functions
         function handleGameAction() {
             if (!gameState.isPlaying) {
@@ -1181,6 +1288,7 @@
             gameState.balance -= betAmount;
             gameState.hasBet = true;
             gameState.hasCashedOut = false;
+            gameState.curvePoints = [];
             updateBalance();
             
             startGame();
@@ -1194,11 +1302,12 @@
             actionButton.innerHTML = '<i class="fas fa-hand-paper"></i> ক্যাশআউট';
             actionButton.className = 'action-button cashout-button';
             
-            // Reset plane position
-            planeContainer.style.left = '50px';
-            planeContainer.style.bottom = '50px';
-            plane.style.transform = 'rotate(0deg)';
-            planeTrail.style.height = '0px';
+            multiplierDisplay.textContent = '1.00x';
+            multiplierDisplay.classList.remove('crashed');
+            
+            // Clear previous curve
+            curvePath.setAttribute('d', '');
+            curveFill.setAttribute('d', '');
             
             // Generate live bets
             generateLiveBets();
@@ -1212,27 +1321,36 @@
         function gameLoop() {
             if (!gameState.isPlaying) return;
             
-            // Update multiplier
-            gameState.currentMultiplier += 0.02;
+            // Update multiplier with exponential growth
+            gameState.currentMultiplier += 0.01 * Math.sqrt(gameState.currentMultiplier);
             const displayMultiplier = Math.round(gameState.currentMultiplier * 100) / 100;
             multiplierDisplay.textContent = displayMultiplier + 'x';
             
+            // Calculate plane position
+            const position = calculatePlanePosition(gameState.currentMultiplier);
+            
             // Update plane position
-            const canvasHeight = document.getElementById('gameCanvas').offsetHeight;
-            const canvasWidth = document.getElementById('gameCanvas').offsetWidth;
-            const planeY = (gameState.currentMultiplier - 1) * 40;
-            const planeX = 50 + (gameState.currentMultiplier - 1) * 20;
+            planeContainer.style.left = position.x + 'px';
+            planeContainer.style.bottom = position.y + 'px';
             
-            planeContainer.style.bottom = Math.min(planeY + 50, canvasHeight - 100) + 'px';
-            planeContainer.style.left = Math.min(planeX, canvasWidth - 150) + 'px';
-            plane.style.transform = `rotate(-${Math.min(gameState.currentMultiplier * 3, 45)}deg)`;
+            // Calculate rotation based on movement
+            const rotation = Math.min(Math.atan2(position.y - 50, position.x - 50) * (180 / Math.PI) - 45, 45);
+            planeContainer.style.transform = `rotate(${rotation}deg)`;
             
-            // Update trail
-            planeTrail.style.height = planeY + 'px';
+            // Add to curve points
+            gameState.curvePoints.push({ x: position.x + 30, y: position.y + 30 });
+            
+            // Update curve
+            updateCurvePath();
+            
+            // Create trail effect
+            if (Math.random() > 0.7) {
+                createTrailParticle(position.x + 30, position.y + 30);
+            }
             
             // Play sound effect
-            if (Math.floor(gameState.currentMultiplier) !== Math.floor(gameState.currentMultiplier - 0.02)) {
-                playSound(440 + gameState.currentMultiplier * 30, 0.05);
+            if (Math.floor(gameState.currentMultiplier) !== Math.floor(gameState.currentMultiplier - 0.01)) {
+                playSound(440 + gameState.currentMultiplier * 20, 0.05);
             }
             
             // Check auto cashout
@@ -1269,7 +1387,7 @@
         function crash() {
             gameState.isPlaying = false;
             multiplierDisplay.textContent = 'CRASHED!';
-            multiplierDisplay.style.color = '#ff6b6b';
+            multiplierDisplay.classList.add('crashed');
             
             addToHistory(gameState.crashPoint);
             
@@ -1295,17 +1413,20 @@
             gameState.hasBet = false;
             gameState.hasCashedOut = false;
             gameState.currentMultiplier = 1.00;
+            gameState.curvePoints = [];
             
             multiplierDisplay.textContent = '1.00x';
-            multiplierDisplay.style.color = 'white';
+            multiplierDisplay.classList.remove('crashed');
             
             actionButton.innerHTML = '<i class="fas fa-play"></i> বাজি ধরুন';
             actionButton.className = 'action-button bet-button';
             
             planeContainer.style.left = '50px';
             planeContainer.style.bottom = '50px';
-            plane.style.transform = 'rotate(0deg)';
-            planeTrail.style.height = '0px';
+            planeContainer.style.transform = 'rotate(0deg)';
+            
+            curvePath.setAttribute('d', '');
+            curveFill.setAttribute('d', '');
         }
 
         function setBetAmount(amount) {
@@ -1368,13 +1489,11 @@
         function selectPayment(method) {
             gameState.selectedPayment = method;
             
-            // Update UI
             document.querySelectorAll('.payment-method').forEach(el => {
                 el.classList.remove('selected');
             });
             event.target.closest('.payment-method').classList.add('selected');
             
-            // Update form
             const methodNames = {
                 'bkash': 'bKash',
                 'nagad': 'Nagad',
@@ -1406,7 +1525,6 @@
                 return;
             }
             
-            // Send to Telegram
             const message = `
 🔔 নতুন উইথড্র রিকোয়েস্ট!
 
@@ -1466,6 +1584,7 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            initializeGrid();
             updateBalance();
             
             // Add initial history
