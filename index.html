@@ -1392,27 +1392,49 @@
             }
         }
 
-        // Navigation
+        // Navigation - Fixed function
         function showSection(sectionName) {
+            console.log('Showing section:', sectionName);
+            
+            // Hide all sections
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
             
-            document.getElementById(sectionName).classList.add('active');
+            // Show selected section
+            const targetSection = document.getElementById(sectionName);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
             
+            // Update nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
-            event.target.closest('.nav-item').classList.add('active');
+            
+            // Find and activate the clicked nav item
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                if (item.textContent.toLowerCase().includes(sectionName) || 
+                    (sectionName === 'home' && item.textContent.includes('হোম')) ||
+                    (sectionName === 'rules' && item.textContent.includes('নিয়মাবলী')) ||
+                    (sectionName === 'game' && item.textContent.includes('গেম')) ||
+                    (sectionName === 'about' && item.textContent.includes('সম্পর্কে')) ||
+                    (sectionName === 'withdraw' && item.textContent.includes('উইথড্র'))) {
+                    item.classList.add('active');
+                }
+            });
             
             // Start game when entering game section
             if (sectionName === 'game' && !gameState.isPlaying && !gameState.isWaiting) {
-                startNewRound();
+                setTimeout(() => {
+                    startNewRound();
+                }, 500);
             }
         }
 
         // Sound Effects
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)());
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(frequency, duration, type = 'sine') {
             if (!gameState.soundEnabled) return;
@@ -1441,8 +1463,9 @@
         // Generate crash point using ChatGPT API
         async function generateCrashPointWithAI() {
             try {
-                // যদি API Key না থাকে, তাহলে লোকাল ফাংশন ব্যবহার করুন
-                if (!CHATGPT_API_KEY || CHATGPT_API_KEY === 'YOUR_CHATGPT_API_KEY') {
+                // Check if API key is valid
+                if (!CHATGPT_API_KEY || CHATGPT_API_KEY.length < 10) {
+                    console.log('Using local crash point generation');
                     return generateLocalCrashPoint();
                 }
                 
@@ -1476,7 +1499,7 @@
                 const data = await response.json();
                 const crashPoint = parseFloat(data.choices[0].message.content.trim());
                 
-                // API স্ট্যাটাস আপডেট
+                // Update API status
                 apiIndicator.classList.remove('error');
                 apiStatusText.textContent = 'API সংযুক্ত';
                 
@@ -1484,11 +1507,11 @@
             } catch (error) {
                 console.error('Error generating crash point with AI:', error);
                 
-                // API স্ট্যাটাস আপডেট
+                // Update API status
                 apiIndicator.classList.add('error');
                 apiStatusText.textContent = 'API বিচ্ছিন্ন (লোকাল মোড)';
                 
-                // লোকাল ফাংশন ব্যবহার করুন
+                // Use local function
                 return generateLocalCrashPoint();
             }
         }
@@ -2024,6 +2047,8 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('Initializing game...');
+            
             initializeGrid();
             updateBalance();
             
@@ -2033,12 +2058,14 @@
             }
             
             // Check API status
-            if (CHATGPT_API_KEY && CHATGPT_API_KEY !== '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') {
+            if (CHATGPT_API_KEY && CHATGPT_API_KEY.length > 10) {
                 apiIndicator.classList.remove('error');
                 apiStatusText.textContent = 'API সংযুক্ত';
+                console.log('API key found and valid');
             } else {
                 apiIndicator.classList.add('error');
                 apiStatusText.textContent = 'API বিচ্ছিন্ন (লোকাল মোড)';
+                console.log('API key not found or invalid');
             }
         });
 
