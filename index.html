@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdEarn - Earn Money Watching Ads</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -15,111 +15,177 @@
         }
 
         :root {
-            --primary-color: #0088cc;
-            --secondary-color: #54a3d8;
-            --success-color: #4caf50;
-            --warning-color: #ff9800;
-            --danger-color: #f44336;
-            --dark-bg: #1a1a2e;
-            --light-bg: #f5f7fa;
-            --card-bg: #ffffff;
-            --text-primary: #333333;
-            --text-secondary: #666666;
-            --border-color: #e0e6ed;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --gray: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light-bg);
-            color: var(--text-primary);
-            line-height: 1.6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            position: relative;
             overflow-x: hidden;
         }
 
-        /* Header Styles */
-        .main-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 15px 20px;
-            box-shadow: var(--shadow);
-            position: sticky;
+        body::before {
+            content: '';
+            position: fixed;
             top: 0;
-            z-index: 1000;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.03"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>') repeat;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-decoration: none;
-            color: white;
+            transition: var(--transition);
         }
 
         .logo:hover {
             transform: scale(1.05);
-            transition: var(--transition);
         }
 
-        .admin-nav {
+        .logo i {
+            font-size: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             align-items: center;
         }
 
-        .admin-nav a {
-            color: white;
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            background: var(--light);
+            color: var(--gray);
             text-decoration: none;
-            padding: 8px 15px;
-            border-radius: 20px;
+            font-weight: 600;
             transition: var(--transition);
-            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .admin-nav a:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .nav-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
         }
 
         .user-avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.5);
+            border: 3px solid var(--primary);
+            object-fit: cover;
         }
 
-        /* Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
+        .user-name {
+            font-weight: 600;
+            color: var(--dark);
         }
 
-        /* Panel Visibility */
-        .admin-panel, .user-panel {
+        .admin-badge {
+            background: linear-gradient(135deg, var(--danger), var(--warning));
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Panels */
+        .panel {
             display: none;
+            animation: fadeIn 0.5s ease;
         }
 
-        .admin-panel.active, .user-panel.active {
+        .panel.active {
             display: block;
-            animation: fadeIn 0.5s ease;
         }
 
         @keyframes fadeIn {
@@ -127,19 +193,39 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Admin Panel Styles */
-        .admin-dashboard {
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            gap: 25px;
             margin-bottom: 30px;
         }
 
         .stat-card {
-            background: var(--card-bg);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             padding: 25px;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             transition: var(--transition);
             position: relative;
             overflow: hidden;
@@ -150,170 +236,224 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--success));
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-xl);
         }
 
         .stat-icon {
-            font-size: 30px;
-            color: var(--primary-color);
-            margin-bottom: 15px;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: var(--shadow);
         }
 
         .stat-value {
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--dark);
             margin-bottom: 5px;
         }
 
         .stat-label {
-            color: var(--text-secondary);
+            color: var(--gray);
             font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .admin-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        .admin-section {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: var(--shadow);
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Form Styles */
+        /* Forms */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
-        .form-group label {
+        .form-label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--dark);
+            font-size: 14px;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 15px 20px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
             transition: var(--transition);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
         }
 
         .form-control:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background: white;
         }
 
+        /* Buttons */
         .btn {
-            padding: 12px 25px;
+            padding: 15px 30px;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
             cursor: pointer;
             transition: var(--transition);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             text-decoration: none;
-            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
         }
 
         .btn-success {
-            background: linear-gradient(135deg, var(--success-color), #66bb6a);
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            box-shadow: var(--shadow);
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, var(--danger-color), #ef5350);
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+            box-shadow: var(--shadow);
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: white;
+            box-shadow: var(--shadow);
         }
 
-        /* Table Styles */
-        .data-table {
+        .btn-lg {
+            padding: 20px 40px;
+            font-size: 17px;
+        }
+
+        .btn-block {
             width: 100%;
-            border-collapse: collapse;
+            justify-content: center;
+        }
+
+        /* Tables */
+        .table-container {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow-lg);
+            overflow-x: auto;
             margin-top: 20px;
         }
 
-        .data-table th, .data-table td {
-            padding: 12px 15px;
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 15px;
             text-align: left;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border);
         }
 
         .data-table th {
-            background: var(--light-bg);
-            font-weight: 600;
-            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
         }
 
         .data-table tr:hover {
-            background: rgba(0, 136, 204, 0.05);
+            background: rgba(99, 102, 241, 0.05);
         }
 
         .status-badge {
-            padding: 5px 12px;
+            padding: 6px 15px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .status-pending {
-            background: rgba(255, 152, 0, 0.2);
-            color: var(--warning-color);
+            background: linear-gradient(135deg, var(--warning), #f59e0b);
+            color: white;
         }
 
         .status-completed {
-            background: rgba(76, 175, 80, 0.2);
-            color: var(--success-color);
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
         }
 
         .status-rejected {
-            background: rgba(244, 67, 54, 0.2);
-            color: var(--danger-color);
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
         }
 
-        /* User Panel Styles */
+        /* User Hero Section */
         .user-hero {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 40px 20px;
-            border-radius: 20px;
-            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 30px;
+            padding: 50px 30px;
             text-align: center;
+            color: white;
             position: relative;
             overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-xl);
         }
 
         .user-hero::before {
@@ -323,152 +463,173 @@
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            animation: pulse 3s ease-in-out infinite;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .user-avatar-large {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            margin-bottom: 15px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .user-name-large {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .user-username {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
         }
 
         .balance-display {
             background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
             backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .balance-amount {
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-size: 42px;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .user-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 30px 0;
-        }
-
-        .user-stat-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-
-        .user-stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .user-stat-icon {
-            font-size: 24px;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .ad-section {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-        }
-
+        /* Ad Cards */
         .ad-card {
-            background: linear-gradient(135deg, #f5f7fa, #e9ecef);
-            border-radius: 12px;
-            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
             margin-bottom: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ad-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success), var(--warning), var(--primary));
+            animation: shimmer 3s infinite;
         }
 
         .ad-card:hover {
-            transform: scale(1.02);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-xl);
         }
 
         .ad-reward {
-            background: linear-gradient(135deg, var(--success-color), #66bb6a);
+            background: linear-gradient(135deg, var(--success), #059669);
             color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
             display: inline-block;
             margin-bottom: 15px;
-        }
-
-        .watch-ad-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .watch-ad-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 136, 204, 0.3);
-        }
-
-        .withdraw-section {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 25px;
+            font-size: 14px;
             box-shadow: var(--shadow);
         }
 
+        .ad-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .ad-description {
+            color: var(--gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Payment Methods */
         .payment-method {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
             margin-bottom: 15px;
             cursor: pointer;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
         .payment-method:hover {
-            border-color: var(--primary-color);
-            background: rgba(0, 136, 204, 0.05);
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            transform: translateX(5px);
         }
 
         .payment-method.selected {
-            border-color: var(--primary-color);
-            background: rgba(0, 136, 204, 0.1);
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            transform: scale(1.02);
         }
 
         .payment-icon {
-            font-size: 24px;
-            color: var(--primary-color);
-            margin-right: 15px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: var(--shadow);
         }
 
-        /* Modal Styles */
+        .payment-info h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .payment-info p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -477,9 +638,11 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
+            backdrop-filter: blur(5px);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
+            animation: fadeIn 0.3s ease;
         }
 
         .modal.active {
@@ -487,15 +650,15 @@
         }
 
         .modal-content {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 30px;
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
             max-width: 500px;
             width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
+            text-align: center;
+            box-shadow: var(--shadow-xl);
             animation: slideUp 0.3s ease;
+            position: relative;
         }
 
         @keyframes slideUp {
@@ -503,76 +666,64 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
         .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
             background: none;
             border: none;
             font-size: 24px;
             cursor: pointer;
-            color: var(--text-secondary);
+            color: var(--gray);
             transition: var(--transition);
         }
 
         .modal-close:hover {
-            color: var(--danger-color);
+            color: var(--danger);
             transform: rotate(90deg);
         }
 
-        /* Ad Watching Modal */
-        .ad-watching-modal {
-            text-align: center;
-        }
-
         .ad-timer {
-            font-size: 48px;
-            font-weight: bold;
-            color: var(--primary-color);
+            font-size: 64px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin: 20px 0;
         }
 
         .ad-progress {
             width: 100%;
-            height: 8px;
-            background: var(--border-color);
-            border-radius: 4px;
+            height: 10px;
+            background: var(--border);
+            border-radius: 10px;
             overflow: hidden;
             margin: 20px 0;
         }
 
         .ad-progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--success));
             transition: width 1s linear;
+            border-radius: 10px;
         }
 
-        /* Toast Notification */
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: var(--dark-bg);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: var(--shadow-lg);
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            z-index: 3000;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow-xl);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 2000;
+            min-width: 300px;
         }
 
         .toast.show {
@@ -580,64 +731,112 @@
         }
 
         .toast.success {
-            background: var(--success-color);
+            border-left: 5px solid var(--success);
         }
 
         .toast.error {
-            background: var(--danger-color);
+            border-left: 5px solid var(--danger);
         }
 
         .toast.warning {
-            background: var(--warning-color);
+            border-left: 5px solid var(--warning);
         }
 
-        /* Admin Login Styles */
+        .toast.info {
+            border-left: 5px solid var(--info);
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger);
+        }
+
+        .toast.warning .toast-icon {
+            color: var(--warning);
+        }
+
+        .toast.info .toast-icon {
+            color: var(--info);
+        }
+
+        .toast-message {
+            flex: 1;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Login Form */
         .login-container {
-            max-width: 400px;
+            max-width: 450px;
             margin: 100px auto;
-            padding: 40px;
-            background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: var(--shadow-lg);
         }
 
         .login-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         .login-header h2 {
-            color: var(--primary-color);
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
         }
 
         .login-header p {
-            color: var(--text-secondary);
+            color: var(--gray);
+            font-size: 16px;
         }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .admin-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
-                gap: 15px;
+                text-align: center;
             }
 
-            .admin-dashboard {
+            .nav-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            .user-stats {
-                grid-template-columns: repeat(2, 1fr);
+            .user-hero {
+                padding: 30px 20px;
+            }
+
+            .user-name-large {
+                font-size: 24px;
+            }
+
+            .balance-amount {
+                font-size: 32px;
             }
 
             .modal-content {
-                padding: 20px;
+                padding: 30px 20px;
+            }
+
+            .ad-timer {
+                font-size: 48px;
+            }
+
+            .toast {
+                right: 20px;
+                left: 20px;
+                min-width: auto;
             }
         }
 
@@ -656,6 +855,31 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
         /* Chart Container */
         .chart-container {
             position: relative;
@@ -663,81 +887,209 @@
             margin-top: 20px;
         }
 
-        /* Admin Only Badge */
-        .admin-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="main-header">
-        <div class="header-content">
-            <a href="/" class="logo">
-                <i class="fas fa-coins"></i>
-                AdEarn Platform
-            </a>
-            
-            <!-- Admin Navigation (only visible in admin panel) -->
-            <div class="admin-nav" id="adminNav" style="display: none;">
-                <a href="/admin">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-                <a href="/admin#users">
-                    <i class="fas fa-users"></i> Users
-                </a>
-                <a href="/admin#withdrawals">
-                    <i class="fas fa-money-bill-wave"></i> Withdrawals
-                </a>
-                <a href="/admin#settings">
-                    <i class="fas fa-cog"></i> Settings
-                </a>
-                <a href="/">
-                    <i class="fas fa-home"></i> User Panel
-                </a>
-            </div>
-            
-            <div class="user-info">
-                <img id="currentUserAvatar" class="user-avatar" src="https://picsum.photos/seed/user/100/100" alt="User">
-                <span id="currentUserName">Loading...</span>
-                <span class="admin-badge" id="adminBadge" style="display: none;">ADMIN</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Container -->
     <div class="container">
-        <!-- Admin Panel -->
-        <div class="admin-panel" id="adminPanel">
-            <!-- Admin Login (if not authenticated) -->
-            <div class="login-container" id="adminLogin">
-                <div class="login-header">
-                    <h2><i class="fas fa-user-shield"></i> Admin Login</h2>
-                    <p>Please login to access admin panel</p>
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <i class="fas fa-coins"></i>
+                    AdEarn Pro
+                </a>
+                
+                <nav class="nav-menu" id="navMenu">
+                    <a href="/" class="nav-btn" id="userNavBtn">
+                        <i class="fas fa-home"></i>
+                        User Panel
+                    </a>
+                    <a href="/admin" class="nav-btn" id="adminNavBtn">
+                        <i class="fas fa-shield-alt"></i>
+                        Admin Panel
+                    </a>
+                </nav>
+                
+                <div class="user-info">
+                    <img id="headerAvatar" class="user-avatar" src="https://picsum.photos/seed/user/100/100" alt="User">
+                    <span id="headerName" class="user-name">Loading...</span>
+                    <span class="admin-badge" id="adminBadge" style="display: none;">ADMIN</span>
                 </div>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="adminUsername">Username</label>
-                        <input type="text" class="form-control" id="adminUsername" placeholder="Enter admin username" required>
+            </div>
+        </header>
+
+        <!-- User Panel -->
+        <div class="panel active" id="userPanel">
+            <!-- User Hero -->
+            <div class="user-hero">
+                <img id="userAvatarLarge" class="user-avatar-large" src="https://picsum.photos/seed/user/200/200" alt="User">
+                <h1 id="userNameLarge" class="user-name-large">Welcome to AdEarn Pro</h1>
+                <p id="userUsername" class="user-username">Start earning money by watching ads</p>
+                
+                <div class="balance-display">
+                    <div class="balance-label">Available Balance</div>
+                    <div class="balance-amount" id="userBalance">$0.00</div>
+                </div>
+            </div>
+
+            <!-- User Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-eye"></i>
                     </div>
-                    <div class="form-group">
-                        <label for="adminPassword">Password</label>
-                        <input type="password" class="form-control" id="adminPassword" placeholder="Enter admin password" required>
+                    <div class="stat-value" id="userAdsWatched">0</div>
+                    <div class="stat-label">Ads Watched</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">
-                        <i class="fas fa-sign-in-alt"></i> Login
+                    <div class="stat-value" id="userTotalEarned">$0.00</div>
+                    <div class="stat-label">Total Earned</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-value" id="userTodayEarned">$0.00</div>
+                    <div class="stat-label">Today's Earnings</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-value" id="userLevel">1</div>
+                    <div class="stat-label">Level</div>
+                </div>
+            </div>
+
+            <!-- Ads Section -->
+            <div class="glass-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-ad"></i>
+                        Watch & Earn
+                    </h2>
+                </div>
+                
+                <div class="ad-card">
+                    <div class="ad-reward">+$0.10</div>
+                    <h3 class="ad-title">Premium Advertisement</h3>
+                    <p class="ad-description">Watch our premium partner advertisement and earn double rewards instantly!</p>
+                    <button class="btn btn-primary btn-lg btn-block" onclick="startAdWatch('premium')">
+                        <i class="fas fa-play"></i>
+                        Watch Premium Ad (15s)
+                    </button>
+                </div>
+                
+                <div class="ad-card">
+                    <div class="ad-reward">+$0.05</div>
+                    <h3 class="ad-title">Quick Advertisement</h3>
+                    <p class="ad-description">Short advertisement for quick earnings! Perfect for busy schedules.</p>
+                    <button class="btn btn-success btn-lg btn-block" onclick="startAdWatch('quick')">
+                        <i class="fas fa-play"></i>
+                        Watch Quick Ad (15s)
+                    </button>
+                </div>
+
+                <div class="ad-card">
+                    <div class="ad-reward">+$0.08</div>
+                    <h3 class="ad-title">Gaming Advertisement</h3>
+                    <p class="ad-description">Discover new games and earn rewards while exploring exciting content!</p>
+                    <button class="btn btn-warning btn-lg btn-block" onclick="startAdWatch('gaming')">
+                        <i class="fas fa-gamepad"></i>
+                        Watch Gaming Ad (15s)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Withdraw Section -->
+            <div class="glass-card">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-wallet"></i>
+                        Withdraw Funds
+                    </h2>
+                </div>
+                
+                <div id="paymentMethods">
+                    <!-- Payment methods will be loaded here -->
+                </div>
+                
+                <form id="withdrawForm" style="margin-top: 30px;">
+                    <div class="form-group">
+                        <label class="form-label">Withdrawal Amount</label>
+                        <input type="number" class="form-control" id="withdrawAmount" step="0.01" placeholder="Enter amount to withdraw" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Withdrawal Address</label>
+                        <input type="text" class="form-control" id="withdrawAddress" placeholder="Enter your withdrawal address" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                        <i class="fas fa-paper-plane"></i>
+                        Request Withdrawal
                     </button>
                 </form>
             </div>
+        </div>
 
-            <!-- Admin Dashboard (after login) -->
+        <!-- Admin Panel -->
+        <div class="panel" id="adminPanel">
+            <!-- Admin Login -->
+            <div class="login-container" id="adminLogin">
+                <div class="glass-card">
+                    <div class="login-header">
+                        <h2><i class="fas fa-user-shield"></i> Admin Login</h2>
+                        <p>Please login to access the admin dashboard</p>
+                    </div>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" id="adminUsername" placeholder="Enter admin username" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="adminPassword" placeholder="Enter admin password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Login to Admin Panel
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Admin Dashboard -->
             <div id="adminDashboard" style="display: none;">
-                <!-- Dashboard Stats -->
-                <div class="admin-dashboard">
+                <!-- Stats Overview -->
+                <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">
                             <i class="fas fa-users"></i>
@@ -767,32 +1119,34 @@
                             <i class="fas fa-paper-plane"></i>
                         </div>
                         <div class="stat-value" id="totalWithdrawals">0</div>
-                        <div class="stat-label">Total Withdrawals</div>
+                        <div class="stat-label">Withdrawals</div>
                     </div>
                 </div>
 
-                <!-- Admin Content Sections -->
-                <div class="admin-content">
-                    <!-- Settings Section -->
-                    <div class="admin-section" id="settingsSection">
-                        <h3 class="section-title">
-                            <i class="fas fa-cog"></i>
-                            Platform Settings
-                        </h3>
+                <!-- Admin Sections Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px;">
+                    <!-- Settings -->
+                    <div class="glass-card">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <i class="fas fa-cog"></i>
+                                Platform Settings
+                            </h2>
+                        </div>
                         
                         <form id="settingsForm">
                             <div class="form-group">
-                                <label for="adsReward">Ad Reward Amount</label>
+                                <label class="form-label">Ad Reward Amount</label>
                                 <input type="number" class="form-control" id="adsReward" step="0.01" value="0.10">
                             </div>
                             
                             <div class="form-group">
-                                <label for="adsLimit">Daily Ads Limit</label>
+                                <label class="form-label">Daily Ads Limit</label>
                                 <input type="number" class="form-control" id="adsLimit" value="50">
                             </div>
                             
                             <div class="form-group">
-                                <label for="currency">Currency</label>
+                                <label class="form-label">Currency</label>
                                 <select class="form-control" id="currency">
                                     <option value="BDT">BDT</option>
                                     <option value="USD">USD</option>
@@ -801,72 +1155,77 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="monetagId">Monetag ID</label>
+                                <label class="form-label">Monetag ID</label>
                                 <input type="text" class="form-control" id="monetagId" value="8928295">
                             </div>
                             
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">
                                 <i class="fas fa-save"></i>
                                 Save Settings
                             </button>
                         </form>
                     </div>
 
-                    <!-- Payment Methods Section -->
-                    <div class="admin-section">
-                        <h3 class="section-title">
-                            <i class="fas fa-credit-card"></i>
-                            Payment Methods
-                        </h3>
+                    <!-- Payment Methods -->
+                    <div class="glass-card">
+                        <div class="section-header">
+                            <h2 class="section-title">
+                                <i class="fas fa-credit-card"></i>
+                                Payment Methods
+                            </h2>
+                        </div>
                         
                         <form id="paymentMethodForm">
                             <div class="form-group">
-                                <label for="methodName">Method Name</label>
+                                <label class="form-label">Method Name</label>
                                 <input type="text" class="form-control" id="methodName" placeholder="e.g., PayPal">
                             </div>
                             
                             <div class="form-group">
-                                <label for="methodMin">Minimum Amount</label>
+                                <label class="form-label">Minimum Amount</label>
                                 <input type="number" class="form-control" id="methodMin" step="0.01" placeholder="0.00">
                             </div>
                             
                             <div class="form-group">
-                                <label for="methodMax">Maximum Amount</label>
+                                <label class="form-label">Maximum Amount</label>
                                 <input type="number" class="form-control" id="methodMax" step="0.01" placeholder="0.00">
                             </div>
                             
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-success btn-lg btn-block">
                                 <i class="fas fa-plus"></i>
                                 Add Payment Method
                             </button>
                         </form>
                         
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Method</th>
-                                    <th>Min</th>
-                                    <th>Max</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="paymentMethodsTable">
-                                <!-- Payment methods will be loaded here -->
-                            </tbody>
-                        </table>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Method</th>
+                                        <th>Min</th>
+                                        <th>Max</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentMethodsTable">
+                                    <!-- Payment methods will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- Users Management -->
-                    <div class="admin-section" id="usersSection">
-                        <h3 class="section-title">
+                <!-- Users Management -->
+                <div class="glass-card">
+                    <div class="section-header">
+                        <h2 class="section-title">
                             <i class="fas fa-users"></i>
                             Users Management
-                        </h3>
-                        
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="userSearch" placeholder="Search users by name or ID...">
-                        </div>
-                        
+                        </h2>
+                        <input type="text" class="form-control" style="width: 300px;" id="userSearch" placeholder="Search users...">
+                    </div>
+                    
+                    <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -874,6 +1233,8 @@
                                     <th>Name</th>
                                     <th>Username</th>
                                     <th>Balance</th>
+                                    <th>Ads Watched</th>
+                                    <th>Total Earned</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -882,14 +1243,18 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
 
-                    <!-- Withdrawals Management -->
-                    <div class="admin-section" id="withdrawalsSection">
-                        <h3 class="section-title">
+                <!-- Withdrawals Management -->
+                <div class="glass-card">
+                    <div class="section-header">
+                        <h2 class="section-title">
                             <i class="fas fa-money-bill-wave"></i>
                             Withdrawals Management
-                        </h3>
-                        
+                        </h2>
+                    </div>
+                    
+                    <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
@@ -910,125 +1275,21 @@
                 </div>
             </div>
         </div>
-
-        <!-- User Panel -->
-        <div class="user-panel" id="userPanel">
-            <!-- User Hero Section -->
-            <div class="user-hero">
-                <img id="userAvatarLarge" class="user-avatar-large" src="https://picsum.photos/seed/user/200/200" alt="User">
-                <h2 id="userFullName">Welcome to AdEarn</h2>
-                <p id="userUsername">Start earning money by watching ads</p>
-                
-                <div class="balance-display">
-                    <div class="balance-label">Available Balance</div>
-                    <div class="balance-amount" id="userBalance">$0.00</div>
-                </div>
-            </div>
-
-            <!-- User Stats -->
-            <div class="user-stats">
-                <div class="user-stat-card">
-                    <div class="user-stat-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <div class="stat-value" id="userAdsWatched">0</div>
-                    <div class="stat-label">Ads Watched</div>
-                </div>
-                
-                <div class="user-stat-card">
-                    <div class="user-stat-icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <div class="stat-value" id="userTotalEarned">$0.00</div>
-                    <div class="stat-label">Total Earned</div>
-                </div>
-                
-                <div class="user-stat-card">
-                    <div class="user-stat-icon">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
-                    <div class="stat-value" id="userTodayEarned">$0.00</div>
-                    <div class="stat-label">Today's Earnings</div>
-                </div>
-                
-                <div class="user-stat-card">
-                    <div class="user-stat-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="stat-value" id="userLevel">1</div>
-                    <div class="stat-label">Level</div>
-                </div>
-            </div>
-
-            <!-- Ads Section -->
-            <div class="ad-section">
-                <h3 class="section-title">
-                    <i class="fas fa-ad"></i>
-                    Watch & Earn
-                </h3>
-                
-                <div class="ad-card">
-                    <div class="ad-reward">+$0.10</div>
-                    <h4>Premium Advertisement</h4>
-                    <p>Watch our premium partner advertisement and earn rewards instantly!</p>
-                    <button class="watch-ad-btn" onclick="startAdWatch('premium')">
-                        <i class="fas fa-play"></i>
-                        Watch Ad (15s)
-                    </button>
-                </div>
-                
-                <div class="ad-card">
-                    <div class="ad-reward">+$0.05</div>
-                    <h4>Quick Advertisement</h4>
-                    <p>Short advertisement for quick earnings!</p>
-                    <button class="watch-ad-btn" onclick="startAdWatch('quick')">
-                        <i class="fas fa-play"></i>
-                        Watch Ad (15s)
-                    </button>
-                </div>
-            </div>
-
-            <!-- Withdraw Section -->
-            <div class="withdraw-section">
-                <h3 class="section-title">
-                    <i class="fas fa-wallet"></i>
-                    Withdraw Funds
-                </h3>
-                
-                <div id="paymentMethods">
-                    <!-- Payment methods will be loaded here -->
-                </div>
-                
-                <form id="withdrawForm" style="margin-top: 20px;">
-                    <div class="form-group">
-                        <label for="withdrawAmount">Amount</label>
-                        <input type="number" class="form-control" id="withdrawAmount" step="0.01" placeholder="Enter amount">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="withdrawAddress">Withdrawal Address</label>
-                        <input type="text" class="form-control" id="withdrawAddress" placeholder="Enter your withdrawal address">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-paper-plane"></i>
-                        Request Withdrawal
-                    </button>
-                </form>
-            </div>
-        </div>
     </div>
 
     <!-- Ad Watching Modal -->
     <div class="modal" id="adModal">
-        <div class="modal-content ad-watching-modal">
-            <h3>Watching Advertisement</h3>
+        <div class="modal-content">
+            <button class="modal-close" onclick="skipAd()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 style="margin-bottom: 20px;">Watching Advertisement</h2>
             <div class="ad-timer" id="adTimer">15</div>
             <div class="ad-progress">
                 <div class="ad-progress-bar" id="adProgressBar"></div>
             </div>
-            <p>Please wait until the timer completes to earn rewards</p>
-            <button class="btn btn-danger" id="skipAdBtn" onclick="skipAd()">
+            <p style="color: var(--gray); margin: 20px 0;">Please wait until the timer completes to earn rewards</p>
+            <button class="btn btn-danger" id="skipAdBtn" onclick="skipAd()" disabled>
                 Skip Ad (<span id="skipCountdown">5</span>s)
             </button>
         </div>
@@ -1036,23 +1297,24 @@
 
     <!-- Toast Notification -->
     <div class="toast" id="toast">
-        <i class="fas fa-check-circle"></i>
-        <span id="toastMessage">Success!</span>
+        <i class="fas fa-check-circle toast-icon"></i>
+        <span class="toast-message" id="toastMessage">Success!</span>
     </div>
 
     <script>
-        // Initialize Telegram Web App
+        // Global Variables
         let tg;
         let user = null;
         let isAdmin = false;
         let isLoggedIn = false;
+        let currentPanel = 'user';
         
         // App State
         let appState = {
             settings: {
                 ads_reward: 0.10,
                 ads_limit: 50,
-                currency: 'BDT',
+                currency: 'USD',
                 monetag_id: '8928295'
             },
             users: [],
@@ -1067,64 +1329,62 @@
                 adsWatched: 0,
                 totalEarned: 0.00,
                 todayEarned: 0.00,
-                level: 1
+                level: 1,
+                photo_url: null
             }
         };
 
-        // Initialize app
+        // Initialize App
         document.addEventListener('DOMContentLoaded', function() {
             initTelegramApp();
             detectRoute();
             loadInitialData();
             setupEventListeners();
+            updateUI();
         });
 
-        // Detect current route
+        // Detect Current Route
         function detectRoute() {
             const path = window.location.pathname;
-            const hash = window.location.hash;
             
-            if (path.includes('/admin')) {
+            // Handle GitHub Pages routing
+            if (path.includes('/admin') || path.endsWith('/admin') || path.includes('admin.html')) {
                 showAdminPanel();
-                
-                // Handle hash navigation in admin panel
-                if (hash) {
-                    scrollToSection(hash.substring(1));
-                }
             } else {
                 showUserPanel();
             }
         }
 
-        // Show admin panel
+        // Show User Panel
+        function showUserPanel() {
+            currentPanel = 'user';
+            document.getElementById('userPanel').classList.add('active');
+            document.getElementById('adminPanel').classList.remove('active');
+            document.getElementById('userNavBtn').classList.add('active');
+            document.getElementById('adminNavBtn').classList.remove('active');
+            document.getElementById('adminBadge').style.display = 'none';
+            
+            updateUserPanel();
+        }
+
+        // Show Admin Panel
         function showAdminPanel() {
+            currentPanel = 'admin';
             document.getElementById('adminPanel').classList.add('active');
             document.getElementById('userPanel').classList.remove('active');
-            document.getElementById('adminNav').style.display = 'flex';
+            document.getElementById('adminNavBtn').classList.add('active');
+            document.getElementById('userNavBtn').classList.remove('active');
             document.getElementById('adminBadge').style.display = 'inline-block';
             
-            // Check if already logged in
+            // Check if logged in
             if (localStorage.getItem('adminLoggedIn') === 'true') {
                 document.getElementById('adminLogin').style.display = 'none';
                 document.getElementById('adminDashboard').style.display = 'block';
                 isLoggedIn = true;
-            }
-        }
-
-        // Show user panel
-        function showUserPanel() {
-            document.getElementById('adminPanel').classList.remove('active');
-            document.getElementById('userPanel').classList.add('active');
-            document.getElementById('adminNav').style.display = 'none';
-            document.getElementById('adminBadge').style.display = 'none';
-            updateUserPanel();
-        }
-
-        // Scroll to section in admin panel
-        function scrollToSection(sectionId) {
-            const section = document.getElementById(sectionId + 'Section');
-            if (section) {
-                section.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                document.getElementById('adminLogin').style.display = 'block';
+                document.getElementById('adminDashboard').style.display = 'none';
+                isLoggedIn = false;
             }
         }
 
@@ -1142,47 +1402,54 @@
                         id: user.id.toString(),
                         firstName: user.first_name,
                         lastName: user.last_name || '',
-                        username: user.username || '',
+                        username: user.username || 'user' + user.id,
                         photo_url: user.photo_url
                     };
                 }
             }
             
-            // Update user info in header
-            document.getElementById('currentUserAvatar').src = user?.photo_url || `https://picsum.photos/seed/${appState.currentUser.id}/100/100`;
-            document.getElementById('currentUserName').textContent = user ? `${user.first_name} ${user.last_name || ''}` : 'Guest User';
+            // Update header
+            updateHeader();
         }
 
-        // Load initial data
+        // Update Header
+        function updateHeader() {
+            const currentUser = appState.currentUser;
+            const avatarSrc = currentUser.photo_url || `https://picsum.photos/seed/${currentUser.id}/100/100`;
+            const displayName = currentUser.firstName ? `${currentUser.firstName} ${currentUser.lastName || ''}` : 'Guest User';
+            
+            document.getElementById('headerAvatar').src = avatarSrc;
+            document.getElementById('headerName').textContent = displayName;
+        }
+
+        // Load Initial Data
         function loadInitialData() {
             loadSettings();
             loadPaymentMethods();
             loadUsers();
             loadWithdrawals();
-            updateUI();
         }
 
-        // Load settings
+        // Load Settings
         function loadSettings() {
-            const savedSettings = localStorage.getItem('appSettings');
-            if (savedSettings) {
-                appState.settings = JSON.parse(savedSettings);
+            const saved = localStorage.getItem('appSettings');
+            if (saved) {
+                appState.settings = { ...appState.settings, ...JSON.parse(saved) };
             }
             
-            // Update settings form
+            // Update form
             document.getElementById('adsReward').value = appState.settings.ads_reward;
             document.getElementById('adsLimit').value = appState.settings.ads_limit;
             document.getElementById('currency').value = appState.settings.currency;
             document.getElementById('monetagId').value = appState.settings.monetag_id;
         }
 
-        // Load payment methods
+        // Load Payment Methods
         function loadPaymentMethods() {
-            const savedMethods = localStorage.getItem('paymentMethods');
-            if (savedMethods) {
-                appState.paymentMethods = JSON.parse(savedMethods);
+            const saved = localStorage.getItem('paymentMethods');
+            if (saved) {
+                appState.paymentMethods = JSON.parse(saved);
             } else {
-                // Default payment methods
                 appState.paymentMethods = [
                     { id: 1, name: 'PayPal', minimum: 5.00, maximum: 1000.00 },
                     { id: 2, name: 'Bank Transfer', minimum: 10.00, maximum: 5000.00 },
@@ -1194,13 +1461,12 @@
             updatePaymentMethodsForUser();
         }
 
-        // Load users
+        // Load Users
         function loadUsers() {
-            const savedUsers = localStorage.getItem('appUsers');
-            if (savedUsers) {
-                appState.users = JSON.parse(savedUsers);
+            const saved = localStorage.getItem('appUsers');
+            if (saved) {
+                appState.users = JSON.parse(saved);
             } else {
-                // Default users
                 appState.users = [
                     {
                         id: '123456',
@@ -1227,13 +1493,12 @@
             updateAdminStats();
         }
 
-        // Load withdrawals
+        // Load Withdrawals
         function loadWithdrawals() {
-            const savedWithdrawals = localStorage.getItem('appWithdrawals');
-            if (savedWithdrawals) {
-                appState.withdrawals = JSON.parse(savedWithdrawals);
+            const saved = localStorage.getItem('appWithdrawals');
+            if (saved) {
+                appState.withdrawals = JSON.parse(saved);
             } else {
-                // Default withdrawals
                 appState.withdrawals = [
                     {
                         id: 1,
@@ -1242,7 +1507,7 @@
                         amount: 10.00,
                         method: 'PayPal',
                         status: 'Pending',
-                        date: '2025-01-17'
+                        date: new Date().toISOString().split('T')[0]
                     },
                     {
                         id: 2,
@@ -1251,7 +1516,7 @@
                         amount: 5.00,
                         method: 'Bank Transfer',
                         status: 'Completed',
-                        date: '2025-01-16'
+                        date: new Date(Date.now() - 86400000).toISOString().split('T')[0]
                     }
                 ];
             }
@@ -1259,44 +1524,54 @@
             updateWithdrawalsTable();
         }
 
-        // Setup event listeners
+        // Setup Event Listeners
         function setupEventListeners() {
-            // Admin login form
+            // Navigation
+            document.getElementById('userNavBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/';
+            });
+            
+            document.getElementById('adminNavBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = '/admin';
+            });
+            
+            // Admin Login
             document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 adminLogin();
             });
             
-            // Settings form
+            // Settings Form
             document.getElementById('settingsForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 saveSettings();
             });
             
-            // Payment method form
+            // Payment Method Form
             document.getElementById('paymentMethodForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 addPaymentMethod();
             });
             
-            // Withdraw form
+            // Withdraw Form
             document.getElementById('withdrawForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 requestWithdrawal();
             });
             
-            // User search
+            // User Search
             document.getElementById('userSearch').addEventListener('input', function(e) {
                 searchUsers(e.target.value);
             });
         }
 
-        // Admin login
+        // Admin Login
         function adminLogin() {
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
             
-            // Default admin credentials (in real app, this should be server-side)
             if (username === 'admin' && password === 'shajahan@123') {
                 localStorage.setItem('adminLoggedIn', 'true');
                 isLoggedIn = true;
@@ -1304,44 +1579,13 @@
                 document.getElementById('adminLogin').style.display = 'none';
                 document.getElementById('adminDashboard').style.display = 'block';
                 
-                showToast('Login successful!', 'success');
+                showToast('Login successful! Welcome admin.', 'success');
             } else {
-                showToast('Invalid credentials!', 'error');
+                showToast('Invalid credentials! Please try again.', 'error');
             }
         }
 
-        // Update UI
-        function updateUI() {
-            updateAdminStats();
-            updateUserPanel();
-        }
-
-        // Update admin stats
-        function updateAdminStats() {
-            document.getElementById('totalUsers').textContent = appState.users.length;
-            document.getElementById('totalAds').textContent = appState.users.reduce((sum, user) => sum + (user.adsWatched || 0), 0);
-            document.getElementById('totalRevenue').textContent = appState.settings.currency + ' ' + appState.users.reduce((sum, user) => sum + (user.totalEarned || 0), 0).toFixed(2);
-            document.getElementById('totalWithdrawals').textContent = appState.withdrawals.length;
-        }
-
-        // Update user panel
-        function updateUserPanel() {
-            const user = appState.currentUser;
-            
-            // Update user info
-            document.getElementById('userAvatarLarge').src = user.photo_url || `https://picsum.photos/seed/${user.id}/200/200`;
-            document.getElementById('userFullName').textContent = `${user.firstName} ${user.lastName}`;
-            document.getElementById('userUsername').textContent = '@' + user.username;
-            document.getElementById('userBalance').textContent = appState.settings.currency + ' ' + user.balance.toFixed(2);
-            
-            // Update user stats
-            document.getElementById('userAdsWatched').textContent = user.adsWatched;
-            document.getElementById('userTotalEarned').textContent = appState.settings.currency + ' ' + user.totalEarned.toFixed(2);
-            document.getElementById('userTodayEarned').textContent = appState.settings.currency + ' ' + user.todayEarned.toFixed(2);
-            document.getElementById('userLevel').textContent = user.level;
-        }
-
-        // Save settings
+        // Save Settings
         function saveSettings() {
             appState.settings.ads_reward = parseFloat(document.getElementById('adsReward').value);
             appState.settings.ads_limit = parseInt(document.getElementById('adsLimit').value);
@@ -1354,7 +1598,7 @@
             updateUserPanel();
         }
 
-        // Add payment method
+        // Add Payment Method
         function addPaymentMethod() {
             const name = document.getElementById('methodName').value;
             const min = parseFloat(document.getElementById('methodMin').value);
@@ -1366,7 +1610,7 @@
             }
             
             const newMethod = {
-                id: appState.paymentMethods.length + 1,
+                id: Date.now(),
                 name,
                 minimum: min,
                 maximum: max
@@ -1378,18 +1622,18 @@
             updatePaymentMethodsTable();
             updatePaymentMethodsForUser();
             
-            // Reset form
             document.getElementById('paymentMethodForm').reset();
-            
             showToast('Payment method added successfully!', 'success');
         }
 
-        // Update payment methods table
+        // Update Payment Methods Table
         function updatePaymentMethodsTable() {
             const tbody = document.getElementById('paymentMethodsTable');
+            if (!tbody) return;
+            
             tbody.innerHTML = appState.paymentMethods.map(method => `
                 <tr>
-                    <td>${method.name}</td>
+                    <td><strong>${method.name}</strong></td>
                     <td>$${method.minimum.toFixed(2)}</td>
                     <td>$${method.maximum.toFixed(2)}</td>
                     <td>
@@ -1401,15 +1645,17 @@
             `).join('');
         }
 
-        // Update payment methods for user
+        // Update Payment Methods for User
         function updatePaymentMethodsForUser() {
             const container = document.getElementById('paymentMethods');
+            if (!container) return;
+            
             container.innerHTML = appState.paymentMethods.map(method => `
                 <div class="payment-method" onclick="selectPaymentMethod(${method.id})">
                     <div class="payment-icon">
                         <i class="fas fa-credit-card"></i>
                     </div>
-                    <div>
+                    <div class="payment-info">
                         <h4>${method.name}</h4>
                         <p>Min: $${method.minimum.toFixed(2)} - Max: $${method.maximum.toFixed(2)}</p>
                     </div>
@@ -1417,7 +1663,7 @@
             `).join('');
         }
 
-        // Select payment method
+        // Select Payment Method
         function selectPaymentMethod(methodId) {
             document.querySelectorAll('.payment-method').forEach(el => {
                 el.classList.remove('selected');
@@ -1426,26 +1672,29 @@
             appState.selectedPaymentMethod = methodId;
         }
 
-        // Delete payment method
+        // Delete Payment Method
         function deletePaymentMethod(methodId) {
             appState.paymentMethods = appState.paymentMethods.filter(method => method.id !== methodId);
             localStorage.setItem('paymentMethods', JSON.stringify(appState.paymentMethods));
             
             updatePaymentMethodsTable();
             updatePaymentMethodsForUser();
-            
-            showToast('Payment method deleted', 'success');
+            showToast('Payment method deleted successfully', 'success');
         }
 
-        // Update users table
+        // Update Users Table
         function updateUsersTable() {
             const tbody = document.getElementById('usersTable');
+            if (!tbody) return;
+            
             tbody.innerHTML = appState.users.map(user => `
                 <tr>
                     <td>${user.id}</td>
-                    <td>${user.firstName} ${user.lastName}</td>
+                    <td><strong>${user.firstName} ${user.lastName || ''}</strong></td>
                     <td>@${user.username}</td>
-                    <td>$${user.balance.toFixed(2)}</td>
+                    <td><strong>$${user.balance.toFixed(2)}</strong></td>
+                    <td>${user.adsWatched || 0}</td>
+                    <td>$${(user.totalEarned || 0).toFixed(2)}</td>
                     <td>
                         <button class="btn btn-primary" onclick="editUser('${user.id}')">
                             <i class="fas fa-edit"></i>
@@ -1455,7 +1704,7 @@
             `).join('');
         }
 
-        // Search users
+        // Search Users
         function searchUsers(query) {
             if (!query) {
                 updateUsersTable();
@@ -1464,7 +1713,7 @@
             
             const filtered = appState.users.filter(user => 
                 user.firstName.toLowerCase().includes(query.toLowerCase()) ||
-                user.lastName.toLowerCase().includes(query.toLowerCase()) ||
+                (user.lastName && user.lastName.toLowerCase().includes(query.toLowerCase())) ||
                 user.username.toLowerCase().includes(query.toLowerCase()) ||
                 user.id.includes(query)
             );
@@ -1473,9 +1722,11 @@
             tbody.innerHTML = filtered.map(user => `
                 <tr>
                     <td>${user.id}</td>
-                    <td>${user.firstName} ${user.lastName}</td>
+                    <td><strong>${user.firstName} ${user.lastName || ''}</strong></td>
                     <td>@${user.username}</td>
-                    <td>$${user.balance.toFixed(2)}</td>
+                    <td><strong>$${user.balance.toFixed(2)}</strong></td>
+                    <td>${user.adsWatched || 0}</td>
+                    <td>$${(user.totalEarned || 0).toFixed(2)}</td>
                     <td>
                         <button class="btn btn-primary" onclick="editUser('${user.id}')">
                             <i class="fas fa-edit"></i>
@@ -1485,22 +1736,24 @@
             `).join('');
         }
 
-        // Edit user
+        // Edit User
         function editUser(userId) {
             const user = appState.users.find(u => u.id === userId);
             if (!user) return;
             
-            showToast(`Editing user: ${user.firstName} ${user.lastName}`, 'info');
+            showToast(`Editing user: ${user.firstName} ${user.lastName || ''}`, 'info');
         }
 
-        // Update withdrawals table
+        // Update Withdrawals Table
         function updateWithdrawalsTable() {
             const tbody = document.getElementById('withdrawalsTable');
+            if (!tbody) return;
+            
             tbody.innerHTML = appState.withdrawals.map(withdrawal => `
                 <tr>
-                    <td>${withdrawal.id}</td>
-                    <td>${withdrawal.userName}</td>
-                    <td>$${withdrawal.amount.toFixed(2)}</td>
+                    <td>#${withdrawal.id}</td>
+                    <td><strong>${withdrawal.userName}</strong></td>
+                    <td><strong>$${withdrawal.amount.toFixed(2)}</strong></td>
                     <td>${withdrawal.method}</td>
                     <td>
                         <span class="status-badge status-${withdrawal.status.toLowerCase()}">
@@ -1516,13 +1769,13 @@
                             <button class="btn btn-danger" onclick="rejectWithdrawal(${withdrawal.id})">
                                 <i class="fas fa-times"></i>
                             </button>
-                        ` : ''}
+                        ` : '-'}
                     </td>
                 </tr>
             `).join('');
         }
 
-        // Approve withdrawal
+        // Approve Withdrawal
         function approveWithdrawal(withdrawalId) {
             const withdrawal = appState.withdrawals.find(w => w.id === withdrawalId);
             if (!withdrawal) return;
@@ -1531,10 +1784,10 @@
             localStorage.setItem('appWithdrawals', JSON.stringify(appState.withdrawals));
             
             updateWithdrawalsTable();
-            showToast('Withdrawal approved', 'success');
+            showToast('Withdrawal approved successfully', 'success');
         }
 
-        // Reject withdrawal
+        // Reject Withdrawal
         function rejectWithdrawal(withdrawalId) {
             const withdrawal = appState.withdrawals.find(w => w.id === withdrawalId);
             if (!withdrawal) return;
@@ -1546,18 +1799,19 @@
             showToast('Withdrawal rejected', 'warning');
         }
 
-        // Start ad watching
+        // Start Ad Watching
         function startAdWatch(adType) {
             const rewards = {
                 premium: appState.settings.ads_reward * 2,
-                quick: appState.settings.ads_reward
+                quick: appState.settings.ads_reward,
+                gaming: appState.settings.ads_reward * 1.5
             };
             
             const reward = rewards[adType] || appState.settings.ads_reward;
             showAdModal(reward);
         }
 
-        // Show ad modal
+        // Show Ad Modal
         function showAdModal(reward) {
             const modal = document.getElementById('adModal');
             const timer = document.getElementById('adTimer');
@@ -1569,10 +1823,8 @@
             let timeLeft = 15;
             let skipTimeLeft = 5;
             
-            // Disable skip button initially
             skipBtn.disabled = true;
             
-            // Main ad timer
             const adTimer = setInterval(() => {
                 timeLeft--;
                 timer.textContent = timeLeft;
@@ -1585,7 +1837,6 @@
                 }
             }, 1000);
             
-            // Skip button countdown
             const skipTimer = setInterval(() => {
                 skipTimeLeft--;
                 skipCountdown.textContent = skipTimeLeft;
@@ -1596,32 +1847,26 @@
                 }
             }, 1000);
             
-            // Store timer references for cleanup
             window.currentAdTimer = adTimer;
             window.currentSkipTimer = skipTimer;
         }
 
-        // Complete ad watching
+        // Complete Ad Watching
         function completeAdWatch(reward) {
             const user = appState.currentUser;
             
-            // Update user stats
             user.balance += reward;
             user.totalEarned += reward;
             user.todayEarned += reward;
             user.adsWatched++;
-            
-            // Update level
             user.level = Math.floor(user.adsWatched / 10) + 1;
             
-            // Close modal
             document.getElementById('adModal').classList.remove('active');
             
-            // Update UI
             updateUserPanel();
             updateAdminStats();
             
-            // Save user data
+            // Update user in array
             const existingUser = appState.users.find(u => u.id === user.id);
             if (existingUser) {
                 existingUser.balance = user.balance;
@@ -1630,16 +1875,14 @@
                 localStorage.setItem('appUsers', JSON.stringify(appState.users));
             }
             
-            // Show success message
-            showToast(`Earned ${appState.settings.currency} ${reward.toFixed(2)}!`, 'success');
+            showToast(`🎉 Earned ${appState.settings.currency} ${reward.toFixed(2)}!`, 'success');
             
-            // Haptic feedback if available
             if (tg && tg.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred('success');
             }
         }
 
-        // Skip ad
+        // Skip Ad
         function skipAd() {
             clearInterval(window.currentAdTimer);
             clearInterval(window.currentSkipTimer);
@@ -1647,7 +1890,7 @@
             showToast('Ad skipped - no rewards earned', 'warning');
         }
 
-        // Request withdrawal
+        // Request Withdrawal
         function requestWithdrawal() {
             const amount = parseFloat(document.getElementById('withdrawAmount').value);
             const address = document.getElementById('withdrawAddress').value;
@@ -1664,12 +1907,12 @@
             }
             
             if (amount < method.minimum) {
-                showToast(`Minimum withdrawal amount is ${method.minimum}`, 'error');
+                showToast(`Minimum withdrawal amount is $${method.minimum}`, 'error');
                 return;
             }
             
             if (amount > method.maximum) {
-                showToast(`Maximum withdrawal amount is ${method.maximum}`, 'error');
+                showToast(`Maximum withdrawal amount is $${method.maximum}`, 'error');
                 return;
             }
             
@@ -1678,11 +1921,10 @@
                 return;
             }
             
-            // Create withdrawal request
             const withdrawal = {
-                id: appState.withdrawals.length + 1,
+                id: Date.now(),
                 userId: appState.currentUser.id,
-                userName: `${appState.currentUser.firstName} ${appState.currentUser.lastName}`,
+                userName: `${appState.currentUser.firstName} ${appState.currentUser.lastName || ''}`,
                 amount,
                 method: method.name,
                 status: 'Pending',
@@ -1692,22 +1934,18 @@
             appState.withdrawals.push(withdrawal);
             localStorage.setItem('appWithdrawals', JSON.stringify(appState.withdrawals));
             
-            // Update user balance
             appState.currentUser.balance -= amount;
             
-            // Update user in users array
             const existingUser = appState.users.find(u => u.id === appState.currentUser.id);
             if (existingUser) {
                 existingUser.balance = appState.currentUser.balance;
                 localStorage.setItem('appUsers', JSON.stringify(appState.users));
             }
             
-            // Update UI
             updateWithdrawalsTable();
             updateUserPanel();
             updateAdminStats();
             
-            // Reset form
             document.getElementById('withdrawForm').reset();
             document.querySelectorAll('.payment-method').forEach(el => {
                 el.classList.remove('selected');
@@ -1717,55 +1955,82 @@
             showToast('Withdrawal request submitted successfully!', 'success');
         }
 
-        // Show toast notification
+        // Update UI
+        function updateUI() {
+            updateAdminStats();
+            updateUserPanel();
+        }
+
+        // Update Admin Stats
+        function updateAdminStats() {
+            const totalUsersEl = document.getElementById('totalUsers');
+            const totalAdsEl = document.getElementById('totalAds');
+            const totalRevenueEl = document.getElementById('totalRevenue');
+            const totalWithdrawalsEl = document.getElementById('totalWithdrawals');
+            
+            if (totalUsersEl) totalUsersEl.textContent = appState.users.length;
+            if (totalAdsEl) totalAdsEl.textContent = appState.users.reduce((sum, user) => sum + (user.adsWatched || 0), 0);
+            if (totalRevenueEl) totalRevenueEl.textContent = '$' + appState.users.reduce((sum, user) => sum + (user.totalEarned || 0), 0).toFixed(2);
+            if (totalWithdrawalsEl) totalWithdrawalsEl.textContent = appState.withdrawals.length;
+        }
+
+        // Update User Panel
+        function updateUserPanel() {
+            const user = appState.currentUser;
+            const avatarSrc = user.photo_url || `https://picsum.photos/seed/${user.id}/200/200`;
+            
+            // Update user info
+            const avatarLargeEl = document.getElementById('userAvatarLarge');
+            const nameLargeEl = document.getElementById('userNameLarge');
+            const usernameEl = document.getElementById('userUsername');
+            const balanceEl = document.getElementById('userBalance');
+            
+            if (avatarLargeEl) avatarLargeEl.src = avatarSrc;
+            if (nameLargeEl) nameLargeEl.textContent = `${user.firstName} ${user.lastName || ''}`;
+            if (usernameEl) usernameEl.textContent = '@' + user.username;
+            if (balanceEl) balanceEl.textContent = appState.settings.currency + ' ' + user.balance.toFixed(2);
+            
+            // Update stats
+            const adsWatchedEl = document.getElementById('userAdsWatched');
+            const totalEarnedEl = document.getElementById('userTotalEarned');
+            const todayEarnedEl = document.getElementById('userTodayEarned');
+            const levelEl = document.getElementById('userLevel');
+            
+            if (adsWatchedEl) adsWatchedEl.textContent = user.adsWatched;
+            if (totalEarnedEl) totalEarnedEl.textContent = appState.settings.currency + ' ' + user.totalEarned.toFixed(2);
+            if (todayEarnedEl) todayEarnedEl.textContent = appState.settings.currency + ' ' + user.todayEarned.toFixed(2);
+            if (levelEl) levelEl.textContent = user.level;
+        }
+
+        // Show Toast
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = toast.querySelector('.toast-icon');
             
-            // Update toast content
             toastMessage.textContent = message;
-            
-            // Update toast class
             toast.className = 'toast show ' + type;
             
-            // Update icon based on type
-            const icon = toast.querySelector('i');
+            // Update icon
             switch (type) {
                 case 'success':
-                    icon.className = 'fas fa-check-circle';
+                    toastIcon.className = 'fas fa-check-circle toast-icon';
                     break;
                 case 'error':
-                    icon.className = 'fas fa-exclamation-circle';
+                    toastIcon.className = 'fas fa-exclamation-circle toast-icon';
                     break;
                 case 'warning':
-                    icon.className = 'fas fa-exclamation-triangle';
+                    toastIcon.className = 'fas fa-exclamation-triangle toast-icon';
                     break;
                 case 'info':
-                    icon.className = 'fas fa-info-circle';
+                    toastIcon.className = 'fas fa-info-circle toast-icon';
                     break;
             }
             
-            // Hide toast after 3 seconds
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
-
-        // Handle browser back/forward
-        window.addEventListener('popstate', function(event) {
-            detectRoute();
-        });
-
-        // Handle navigation clicks
-        document.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A' && e.target.getAttribute('href')) {
-                const href = e.target.getAttribute('href');
-                if (href.startsWith('/')) {
-                    e.preventDefault();
-                    window.location.href = href;
-                }
-            }
-        });
     </script>
 </body>
 </html>
