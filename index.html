@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdEarn - Earn Money Watching Ads</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>TempMail Pro - রিয়েল টেম্পোরারি ইমেইল</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -17,454 +15,201 @@
         :root {
             --primary: #6366f1;
             --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
+            --secondary: #22d3ee;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --info: #3b82f6;
             --dark: #1e293b;
-            --light: #f8fafc;
+            --light: #f1f5f9;
             --white: #ffffff;
-            --gray: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--gradient);
             min-height: 100vh;
-            color: var(--dark);
             position: relative;
             overflow-x: hidden;
         }
 
-        body::before {
-            content: '';
+        /* Animated Background */
+        .bg-animation {
             position: fixed;
+            width: 100%;
+            height: 100%;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.03"><path d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/></g></g></svg>') repeat;
-            pointer-events: none;
-            z-index: 0;
+            z-index: -1;
+            opacity: 0.3;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
+        .bg-animation span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            animation: move 25s linear infinite;
+            bottom: -150px;
+        }
+
+        .bg-animation span:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
+        .bg-animation span:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
+        .bg-animation span:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+        .bg-animation span:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; }
+        .bg-animation span:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; }
+        .bg-animation span:nth-child(6) { left: 75%; width: 110px; height: 110px; animation-delay: 3s; }
+        .bg-animation span:nth-child(7) { left: 35%; width: 150px; height: 150px; animation-delay: 7s; }
+        .bg-animation span:nth-child(8) { left: 50%; width: 25px; height: 25px; animation-delay: 15s; animation-duration: 45s; }
+        .bg-animation span:nth-child(9) { left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 35s; }
+        .bg-animation span:nth-child(10) { left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; }
+
+        @keyframes move {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
+            100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
         }
 
         /* Header */
-        .header {
+        header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px 30px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-xl);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: slideDown 0.5s ease;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        @keyframes slideDown {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .header-content {
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 15px;
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
         }
 
         .logo i {
-            font-size: 32px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+            animation: pulse 2s infinite;
         }
 
-        .nav-menu {
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .nav-links {
             display: flex;
-            gap: 10px;
+            gap: 2rem;
             align-items: center;
         }
 
-        .nav-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 12px;
-            background: var(--light);
-            color: var(--gray);
-            text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-btn:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .nav-btn.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50px;
-            backdrop-filter: blur(10px);
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid var(--primary);
-            object-fit: cover;
-        }
-
-        .user-name {
-            font-weight: 600;
+        .nav-link {
             color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
         }
 
-        .admin-badge {
-            background: linear-gradient(135deg, var(--danger), var(--warning));
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .api-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--success);
             color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
-        /* Panels */
-        .panel {
-            display: none;
-            animation: fadeIn 0.5s ease;
+        .api-status::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s infinite;
         }
 
-        .panel.active {
-            display: block;
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Email Generator Section */
+        .email-generator {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Glass Card */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: var(--shadow-xl);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 30px;
-            transition: var(--transition);
-        }
-
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
+        .generator-header {
             text-align: center;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 2rem;
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--success));
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .stat-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 15px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-            box-shadow: var(--shadow);
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: 800;
+        .generator-header h1 {
+            font-size: 2.5rem;
             color: var(--dark);
-            margin-bottom: 5px;
+            margin-bottom: 0.5rem;
         }
 
-        .stat-label {
-            color: var(--gray);
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .generator-header p {
+            color: #64748b;
+            font-size: 1.1rem;
         }
 
-        /* Forms */
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 14px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            font-size: 15px;
-            transition: var(--transition);
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(5px);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-            background: white;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 15px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
+        .email-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
         }
 
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            box-shadow: var(--shadow);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #059669);
-            color: white;
-            box-shadow: var(--shadow);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger), #dc2626);
-            color: white;
-            box-shadow: var(--shadow);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning), #d97706);
-            color: white;
-            box-shadow: var(--shadow);
-        }
-
-        .btn-lg {
-            padding: 20px 40px;
-            font-size: 17px;
-        }
-
-        .btn-block {
-            width: 100%;
-            justify-content: center;
-        }
-
-        /* Tables */
-        .table-container {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: var(--shadow-lg);
-            overflow-x: auto;
-            margin-top: 20px;
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-table th,
-        .data-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .data-table th {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 0.5px;
-        }
-
-        .data-table tr:hover {
-            background: rgba(99, 102, 241, 0.05);
-        }
-
-        .status-badge {
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-pending {
-            background: linear-gradient(135deg, var(--warning), #f59e0b);
-            color: white;
-        }
-
-        .status-completed {
-            background: linear-gradient(135deg, var(--success), #059669);
-            color: white;
-        }
-
-        .status-rejected {
-            background: linear-gradient(135deg, var(--danger), #dc2626);
-            color: white;
-        }
-
-        /* User Hero Section */
-        .user-hero {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 30px;
-            padding: 50px 30px;
-            text-align: center;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-xl);
-        }
-
-        .user-hero::before {
+        .email-display::before {
             content: '';
             position: absolute;
             top: -50%;
             right: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
         }
 
         @keyframes rotate {
@@ -472,1565 +217,1088 @@
             to { transform: rotate(360deg); }
         }
 
-        .user-avatar-large {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 5px solid rgba(255, 255, 255, 0.3);
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .user-name-large {
-            font-size: 32px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .user-username {
-            font-size: 18px;
-            opacity: 0.9;
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .balance-display {
+        .current-email {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            position: relative;
-            z-index: 1;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
-        .balance-label {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .email-text {
+            flex: 1;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
         }
 
-        .balance-amount {
-            font-size: 42px;
-            font-weight: 800;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .email-actions {
+            display: flex;
+            gap: 0.5rem;
         }
 
-        /* Ad Cards */
-        .ad-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+        .action-btn {
+            background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .generator-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .generate-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow);
+        }
+
+        .generate-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: var(--transition);
+        }
+
+        .generate-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .custom-domain {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .custom-domain input {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .custom-domain input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Inbox Section */
+        .inbox-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.5s ease-out 0.2s both;
+        }
+
+        .inbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .inbox-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .refresh-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .refresh-btn:hover {
+            background: #06b6d4;
+            transform: translateY(-2px);
+        }
+
+        .refresh-btn.spinning i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .email-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .email-item {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
             position: relative;
             overflow: hidden;
         }
 
-        .ad-card::before {
+        .email-item::before {
             content: '';
             position: absolute;
-            top: 0;
             left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--success), var(--warning), var(--primary));
-            animation: shimmer 3s infinite;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.3s;
         }
 
-        .ad-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .ad-reward {
-            background: linear-gradient(135deg, var(--success), #059669);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-weight: 700;
-            display: inline-block;
-            margin-bottom: 15px;
-            font-size: 14px;
-            box-shadow: var(--shadow);
-        }
-
-        .ad-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 10px;
-        }
-
-        .ad-description {
-            color: var(--gray);
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        /* Payment Methods */
-        .payment-method {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 2px solid var(--border);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .payment-method:hover {
+        .email-item:hover {
+            background: white;
             border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.05);
             transform: translateX(5px);
-        }
-
-        .payment-method.selected {
-            border-color: var(--primary);
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
-            transform: scale(1.02);
-        }
-
-        .payment-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
             box-shadow: var(--shadow);
         }
 
-        .payment-info h4 {
-            font-size: 16px;
-            font-weight: 700;
+        .email-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .email-item.unread {
+            background: white;
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .email-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .email-from {
+            font-weight: 600;
             color: var(--dark);
-            margin-bottom: 5px;
+            font-size: 1.1rem;
         }
 
-        .payment-info p {
-            color: var(--gray);
-            font-size: 14px;
+        .email-time {
+            color: #64748b;
+            font-size: 0.9rem;
         }
 
-        /* Modal */
-        .modal {
+        .email-subject {
+            color: var(--dark);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .email-preview {
+            color: #64748b;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .email-otp {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+
+        .empty-inbox {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #64748b;
+        }
+
+        .empty-inbox i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-inbox h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        /* Email Modal */
+        .email-modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.3s;
         }
 
-        .modal.active {
+        .email-modal.active {
             display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
             background: white;
-            border-radius: 25px;
-            padding: 40px;
-            max-width: 500px;
+            border-radius: 1.5rem;
             width: 90%;
-            text-align: center;
-            box-shadow: var(--shadow-xl);
-            animation: slideUp 0.3s ease;
-            position: relative;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.3s;
         }
 
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 1.5rem 1.5rem 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
             background: none;
             border: none;
-            font-size: 24px;
+            color: white;
+            font-size: 1.5rem;
             cursor: pointer;
-            color: var(--gray);
-            transition: var(--transition);
+            transition: transform 0.3s;
         }
 
         .modal-close:hover {
-            color: var(--danger);
             transform: rotate(90deg);
         }
 
-        .ad-timer {
-            font-size: 64px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 20px 0;
+        .modal-body {
+            padding: 2rem;
         }
 
-        .ad-progress {
-            width: 100%;
-            height: 10px;
-            background: var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 20px 0;
+        .email-detail {
+            margin-bottom: 1.5rem;
         }
 
-        .ad-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--success));
-            transition: width 1s linear;
-            border-radius: 10px;
+        .detail-row {
+            display: flex;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        /* Toast */
+        .detail-label {
+            font-weight: 600;
+            color: #64748b;
+            width: 100px;
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            color: var(--dark);
+            flex: 1;
+        }
+
+        .email-content {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            line-height: 1.8;
+            color: var(--dark);
+        }
+
+        /* Toast Notification */
         .toast {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 2rem;
+            right: 2rem;
             background: white;
-            padding: 20px 30px;
-            border-radius: 15px;
-            box-shadow: var(--shadow-xl);
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-lg);
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 1rem;
             transform: translateX(400px);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s;
             z-index: 2000;
-            min-width: 300px;
         }
 
         .toast.show {
             transform: translateX(0);
         }
 
-        .toast.success {
-            border-left: 5px solid var(--success);
-        }
-
-        .toast.error {
-            border-left: 5px solid var(--danger);
-        }
-
-        .toast.warning {
-            border-left: 5px solid var(--warning);
-        }
-
-        .toast.info {
-            border-left: 5px solid var(--info);
-        }
-
         .toast-icon {
-            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .toast.success .toast-icon {
-            color: var(--success);
+            background: var(--success);
+            color: white;
         }
 
         .toast.error .toast-icon {
-            color: var(--danger);
-        }
-
-        .toast.warning .toast-icon {
-            color: var(--warning);
+            background: var(--danger);
+            color: white;
         }
 
         .toast.info .toast-icon {
-            color: var(--info);
+            background: var(--primary);
+            color: white;
         }
 
         .toast-message {
             flex: 1;
+        }
+
+        .toast-title {
             font-weight: 600;
             color: var(--dark);
+            margin-bottom: 0.25rem;
         }
 
-        /* Login Form */
-        .login-container {
-            max-width: 450px;
-            margin: 100px auto;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .login-header h2 {
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-
-        .login-header p {
-            color: var(--gray);
-            font-size: 16px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .nav-menu {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .user-hero {
-                padding: 30px 20px;
-            }
-
-            .user-name-large {
-                font-size: 24px;
-            }
-
-            .balance-amount {
-                font-size: 32px;
-            }
-
-            .modal-content {
-                padding: 30px 20px;
-            }
-
-            .ad-timer {
-                font-size: 48px;
-            }
-
-            .toast {
-                right: 20px;
-                left: 20px;
-                min-width: auto;
-            }
+        .toast-text {
+            color: #64748b;
+            font-size: 0.9rem;
         }
 
         /* Loading Spinner */
-        .spinner {
+        .loading-spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
             border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
-            animation: spin 1s linear infinite;
+            animation: spin 1s ease-in-out infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem;
+            }
 
-        /* Section Headers */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border);
-        }
+            .nav-links {
+                display: none;
+            }
 
-        .section-title {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+            .generator-header h1 {
+                font-size: 2rem;
+            }
 
-        .section-title i {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+            .current-email {
+                flex-direction: column;
+                text-align: center;
+            }
 
-        /* Chart Container */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin-top: 20px;
-        }
+            .email-actions {
+                width: 100%;
+                justify-content: center;
+            }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--gray);
-        }
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
 
-        .empty-state i {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
+            .inbox-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
 
-        .empty-state h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            font-size: 14px;
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-content">
-                <a href="/" class="logo">
-                    <i class="fas fa-coins"></i>
-                    AdEarn Pro
-                </a>
-                
-                <nav class="nav-menu" id="navMenu">
-                    <a href="/" class="nav-btn" id="userNavBtn">
-                        <i class="fas fa-home"></i>
-                        User Panel
-                    </a>
-                    <a href="/admin" class="nav-btn" id="adminNavBtn">
-                        <i class="fas fa-shield-alt"></i>
-                        Admin Panel
-                    </a>
-                </nav>
-                
-                <div class="user-info">
-                    <img id="headerAvatar" class="user-avatar" src="https://picsum.photos/seed/user/100/100" alt="User">
-                    <span id="headerName" class="user-name">Loading...</span>
-                    <span class="admin-badge" id="adminBadge" style="display: none;">ADMIN</span>
-                </div>
-            </div>
-        </header>
-
-        <!-- User Panel -->
-        <div class="panel active" id="userPanel">
-            <!-- User Hero -->
-            <div class="user-hero">
-                <img id="userAvatarLarge" class="user-avatar-large" src="https://picsum.photos/seed/user/200/200" alt="User">
-                <h1 id="userNameLarge" class="user-name-large">Welcome to AdEarn Pro</h1>
-                <p id="userUsername" class="user-username">Start earning money by watching ads</p>
-                
-                <div class="balance-display">
-                    <div class="balance-label">Available Balance</div>
-                    <div class="balance-amount" id="userBalance">$0.00</div>
-                </div>
-            </div>
-
-            <!-- User Stats -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <div class="stat-value" id="userAdsWatched">0</div>
-                    <div class="stat-label">Ads Watched</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <div class="stat-value" id="userTotalEarned">$0.00</div>
-                    <div class="stat-label">Total Earned</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
-                    <div class="stat-value" id="userTodayEarned">$0.00</div>
-                    <div class="stat-label">Today's Earnings</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="stat-value" id="userLevel">1</div>
-                    <div class="stat-label">Level</div>
-                </div>
-            </div>
-
-            <!-- Ads Section -->
-            <div class="glass-card">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <i class="fas fa-ad"></i>
-                        Watch & Earn
-                    </h2>
-                </div>
-                
-                <div class="ad-card">
-                    <div class="ad-reward">+$0.10</div>
-                    <h3 class="ad-title">Premium Advertisement</h3>
-                    <p class="ad-description">Watch our premium partner advertisement and earn double rewards instantly!</p>
-                    <button class="btn btn-primary btn-lg btn-block" onclick="startAdWatch('premium')">
-                        <i class="fas fa-play"></i>
-                        Watch Premium Ad (15s)
-                    </button>
-                </div>
-                
-                <div class="ad-card">
-                    <div class="ad-reward">+$0.05</div>
-                    <h3 class="ad-title">Quick Advertisement</h3>
-                    <p class="ad-description">Short advertisement for quick earnings! Perfect for busy schedules.</p>
-                    <button class="btn btn-success btn-lg btn-block" onclick="startAdWatch('quick')">
-                        <i class="fas fa-play"></i>
-                        Watch Quick Ad (15s)
-                    </button>
-                </div>
-
-                <div class="ad-card">
-                    <div class="ad-reward">+$0.08</div>
-                    <h3 class="ad-title">Gaming Advertisement</h3>
-                    <p class="ad-description">Discover new games and earn rewards while exploring exciting content!</p>
-                    <button class="btn btn-warning btn-lg btn-block" onclick="startAdWatch('gaming')">
-                        <i class="fas fa-gamepad"></i>
-                        Watch Gaming Ad (15s)
-                    </button>
-                </div>
-            </div>
-
-            <!-- Withdraw Section -->
-            <div class="glass-card">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <i class="fas fa-wallet"></i>
-                        Withdraw Funds
-                    </h2>
-                </div>
-                
-                <div id="paymentMethods">
-                    <!-- Payment methods will be loaded here -->
-                </div>
-                
-                <form id="withdrawForm" style="margin-top: 30px;">
-                    <div class="form-group">
-                        <label class="form-label">Withdrawal Amount</label>
-                        <input type="number" class="form-control" id="withdrawAmount" step="0.01" placeholder="Enter amount to withdraw" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Withdrawal Address</label>
-                        <input type="text" class="form-control" id="withdrawAddress" placeholder="Enter your withdrawal address" required>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">
-                        <i class="fas fa-paper-plane"></i>
-                        Request Withdrawal
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Admin Panel -->
-        <div class="panel" id="adminPanel">
-            <!-- Admin Login -->
-            <div class="login-container" id="adminLogin">
-                <div class="glass-card">
-                    <div class="login-header">
-                        <h2><i class="fas fa-user-shield"></i> Admin Login</h2>
-                        <p>Please login to access the admin dashboard</p>
-                    </div>
-                    <form id="loginForm">
-                        <div class="form-group">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-control" id="adminUsername" placeholder="Enter admin username" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Password</label>
-                            <input type="password" class="form-control" id="adminPassword" placeholder="Enter admin password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-lg btn-block">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Login to Admin Panel
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Admin Dashboard -->
-            <div id="adminDashboard" style="display: none;">
-                <!-- Stats Overview -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-value" id="totalUsers">0</div>
-                        <div class="stat-label">Total Users</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-eye"></i>
-                        </div>
-                        <div class="stat-value" id="totalAds">0</div>
-                        <div class="stat-label">Total Ads Watched</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="stat-value" id="totalRevenue">$0</div>
-                        <div class="stat-label">Total Revenue</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-paper-plane"></i>
-                        </div>
-                        <div class="stat-value" id="totalWithdrawals">0</div>
-                        <div class="stat-label">Withdrawals</div>
-                    </div>
-                </div>
-
-                <!-- Admin Sections Grid -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 30px;">
-                    <!-- Settings -->
-                    <div class="glass-card">
-                        <div class="section-header">
-                            <h2 class="section-title">
-                                <i class="fas fa-cog"></i>
-                                Platform Settings
-                            </h2>
-                        </div>
-                        
-                        <form id="settingsForm">
-                            <div class="form-group">
-                                <label class="form-label">Ad Reward Amount</label>
-                                <input type="number" class="form-control" id="adsReward" step="0.01" value="0.10">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Daily Ads Limit</label>
-                                <input type="number" class="form-control" id="adsLimit" value="50">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Currency</label>
-                                <select class="form-control" id="currency">
-                                    <option value="BDT">BDT</option>
-                                    <option value="USD">USD</option>
-                                    <option value="EUR">EUR</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Monetag ID</label>
-                                <input type="text" class="form-control" id="monetagId" value="8928295">
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary btn-lg btn-block">
-                                <i class="fas fa-save"></i>
-                                Save Settings
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Payment Methods -->
-                    <div class="glass-card">
-                        <div class="section-header">
-                            <h2 class="section-title">
-                                <i class="fas fa-credit-card"></i>
-                                Payment Methods
-                            </h2>
-                        </div>
-                        
-                        <form id="paymentMethodForm">
-                            <div class="form-group">
-                                <label class="form-label">Method Name</label>
-                                <input type="text" class="form-control" id="methodName" placeholder="e.g., PayPal">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Minimum Amount</label>
-                                <input type="number" class="form-control" id="methodMin" step="0.01" placeholder="0.00">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Maximum Amount</label>
-                                <input type="number" class="form-control" id="methodMax" step="0.01" placeholder="0.00">
-                            </div>
-                            
-                            <button type="submit" class="btn btn-success btn-lg btn-block">
-                                <i class="fas fa-plus"></i>
-                                Add Payment Method
-                            </button>
-                        </form>
-                        
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Method</th>
-                                        <th>Min</th>
-                                        <th>Max</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="paymentMethodsTable">
-                                    <!-- Payment methods will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Users Management -->
-                <div class="glass-card">
-                    <div class="section-header">
-                        <h2 class="section-title">
-                            <i class="fas fa-users"></i>
-                            Users Management
-                        </h2>
-                        <input type="text" class="form-control" style="width: 300px;" id="userSearch" placeholder="Search users...">
-                    </div>
-                    
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Username</th>
-                                    <th>Balance</th>
-                                    <th>Ads Watched</th>
-                                    <th>Total Earned</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTable">
-                                <!-- Users will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Withdrawals Management -->
-                <div class="glass-card">
-                    <div class="section-header">
-                        <h2 class="section-title">
-                            <i class="fas fa-money-bill-wave"></i>
-                            Withdrawals Management
-                        </h2>
-                    </div>
-                    
-                    <div class="table-container">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>User</th>
-                                    <th>Amount</th>
-                                    <th>Method</th>
-                                    <th>Status</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="withdrawalsTable">
-                                <!-- Withdrawals will be loaded here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
     </div>
 
-    <!-- Ad Watching Modal -->
-    <div class="modal" id="adModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="skipAd()">
-                <i class="fas fa-times"></i>
-            </button>
-            <h2 style="margin-bottom: 20px;">Watching Advertisement</h2>
-            <div class="ad-timer" id="adTimer">15</div>
-            <div class="ad-progress">
-                <div class="ad-progress-bar" id="adProgressBar"></div>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-envelope-open-text"></i>
+                <span>TempMail Pro</span>
             </div>
-            <p style="color: var(--gray); margin: 20px 0;">Please wait until the timer completes to earn rewards</p>
-            <button class="btn btn-danger" id="skipAdBtn" onclick="skipAd()" disabled>
-                Skip Ad (<span id="skipCountdown">5</span>s)
-            </button>
+            <div class="nav-links">
+                <a href="#" class="nav-link">হোম</a>
+                <a href="#" class="nav-link">ডোমেইন</a>
+                <a href="#" class="nav-link">API</a>
+                <a href="#" class="nav-link">প্রাইসিং</a>
+                <div class="api-status">API সংযুক্ত</div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Email Generator Section -->
+        <section class="email-generator">
+            <div class="generator-header">
+                <h1>রিয়েল টেম্পোরারি ইমেইল</h1>
+                <p>আসল ইমেইল API দিয়ে তৈরি - যেকোনো সাইট থেকে ইমেইল রিসিভ করুন</p>
+            </div>
+
+            <div class="email-display">
+                <div class="current-email">
+                    <span class="email-text" id="currentEmail">লোড হচ্ছে...</span>
+                    <div class="email-actions">
+                        <button class="action-btn" onclick="copyEmail()">
+                            <i class="fas fa-copy"></i>
+                            <span>কপি</span>
+                        </button>
+                        <button class="action-btn" onclick="shareEmail()">
+                            <i class="fas fa-share"></i>
+                            <span>শেয়ার</span>
+                        </button>
+                        <button class="action-btn" onclick="downloadQR()">
+                            <i class="fas fa-qrcode"></i>
+                            <span>QR</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="generator-controls">
+                <button class="generate-btn" id="generateBtn" onclick="generateNewEmail()">
+                    <i class="fas fa-sync"></i>
+                    <span>নতুন ইমেইল তৈরি করুন</span>
+                </button>
+                <div class="custom-domain">
+                    <input type="text" id="customUsername" placeholder="ইউজারনেম">
+                    <select id="domainSelect" style="padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 0.5rem;">
+                        <option value="@1secmail.com">@1secmail.com</option>
+                        <option value="@1secmail.net">@1secmail.net</option>
+                        <option value="@1secmail.org">@1secmail.org</option>
+                        <option value="@wwjmp.com">@wwjmp.com</option>
+                        <option value="@esiix.com">@esiix.com</option>
+                    </select>
+                    <button class="action-btn" onclick="generateCustomEmail()">
+                        <i class="fas fa-check"></i>
+                        <span>তৈরি করুন</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="stat-value" id="totalEmails">0</div>
+                <div class="stat-label">মোট ইমেইল</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-value" id="activeTime">0:00</div>
+                <div class="stat-label">সক্রিয় সময়</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="stat-value">100%</div>
+                <div class="stat-label">নিরাপত্তা</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-infinity"></i>
+                </div>
+                <div class="stat-value">∞</div>
+                <div class="stat-label">আনলিমিটেড</div>
+            </div>
+        </section>
+
+        <!-- Inbox Section -->
+        <section class="inbox-section">
+            <div class="inbox-header">
+                <div class="inbox-title">
+                    <i class="fas fa-inbox"></i>
+                    <span>ইনবক্স</span>
+                    <span class="api-status">লাইভ</span>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button class="refresh-btn" id="refreshBtn" onclick="refreshInbox()">
+                        <i class="fas fa-sync"></i>
+                        <span>রিফ্রেশ করুন</span>
+                    </button>
+                    <button class="action-btn" onclick="clearInbox()">
+                        <i class="fas fa-trash"></i>
+                        <span>সব মুছুন</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="email-list" id="emailList">
+                <div class="empty-inbox">
+                    <i class="fas fa-inbox"></i>
+                    <h3>ইনবক্স খালি</h3>
+                    <p>নতুন ইমেইল আসার অপেক্ষায় আছে...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Email Modal -->
+    <div class="email-modal" id="emailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ইমেইল বিস্তারিত</h2>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Email details will be inserted here -->
+            </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
     <div class="toast" id="toast">
-        <i class="fas fa-check-circle toast-icon"></i>
-        <span class="toast-message" id="toastMessage">Success!</span>
+        <div class="toast-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="toast-message">
+            <div class="toast-title">সফল</div>
+            <div class="toast-text">অপারেশন সফলভাবে সম্পন্ন হয়েছে</div>
+        </div>
     </div>
 
     <script>
-        // Global Variables
-        let tg;
-        let user = null;
-        let isAdmin = false;
-        let isLoggedIn = false;
-        let currentPanel = 'user';
+        // API Configuration - Using 1secmail API
+        const API_BASE = 'https://www.1secmail.com/api/v1/';
         
-        // App State
-        let appState = {
-            settings: {
-                ads_reward: 0.10,
-                ads_limit: 50,
-                currency: 'USD',
-                monetag_id: '8928295'
-            },
-            users: [],
-            paymentMethods: [],
-            withdrawals: [],
-            currentUser: {
-                id: '123456',
-                firstName: 'John',
-                lastName: 'Doe',
-                username: 'johndoe',
-                balance: 0.00,
-                adsWatched: 0,
-                totalEarned: 0.00,
-                todayEarned: 0.00,
-                level: 1,
-                photo_url: null
-            }
-        };
+        // Global variables
+        let currentEmail = '';
+        let emails = [];
+        let login = '';
+        let domain = '';
+        let startTime = Date.now();
+        let autoRefreshInterval;
 
-        // Initialize App
+        // Available domains
+        const domains = [
+            '1secmail.com',
+            '1secmail.net',
+            '1secmail.org',
+            'wwjmp.com',
+            'esiix.com'
+        ];
+
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            initTelegramApp();
-            detectRoute();
-            loadInitialData();
-            setupEventListeners();
-            updateUI();
+            generateNewEmail();
+            startAutoRefresh();
+            updateTimer();
         });
 
-        // Detect Current Route
-        function detectRoute() {
-            const path = window.location.pathname;
-            
-            // Handle GitHub Pages routing
-            if (path.includes('/admin') || path.endsWith('/admin') || path.includes('admin.html')) {
-                showAdminPanel();
-            } else {
-                showUserPanel();
-            }
-        }
+        // Generate new email using API
+        async function generateNewEmail() {
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<span class="loading-spinner"></span> তৈরি হচ্ছে...';
 
-        // Show User Panel
-        function showUserPanel() {
-            currentPanel = 'user';
-            document.getElementById('userPanel').classList.add('active');
-            document.getElementById('adminPanel').classList.remove('active');
-            document.getElementById('userNavBtn').classList.add('active');
-            document.getElementById('adminNavBtn').classList.remove('active');
-            document.getElementById('adminBadge').style.display = 'none';
-            
-            updateUserPanel();
-        }
-
-        // Show Admin Panel
-        function showAdminPanel() {
-            currentPanel = 'admin';
-            document.getElementById('adminPanel').classList.add('active');
-            document.getElementById('userPanel').classList.remove('active');
-            document.getElementById('adminNavBtn').classList.add('active');
-            document.getElementById('userNavBtn').classList.remove('active');
-            document.getElementById('adminBadge').style.display = 'inline-block';
-            
-            // Check if logged in
-            if (localStorage.getItem('adminLoggedIn') === 'true') {
-                document.getElementById('adminLogin').style.display = 'none';
-                document.getElementById('adminDashboard').style.display = 'block';
-                isLoggedIn = true;
-            } else {
-                document.getElementById('adminLogin').style.display = 'block';
-                document.getElementById('adminDashboard').style.display = 'none';
-                isLoggedIn = false;
-            }
-        }
-
-        // Initialize Telegram Web App
-        function initTelegramApp() {
-            if (window.Telegram) {
-                tg = window.Telegram.WebApp;
-                tg.ready();
-                tg.expand();
+            try {
+                // Generate random email
+                const randomLogin = Math.random().toString(36).substring(2, 10);
+                const randomDomain = domains[Math.floor(Math.random() * domains.length)];
                 
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    user = tg.initDataUnsafe.user;
-                    appState.currentUser = {
-                        ...appState.currentUser,
-                        id: user.id.toString(),
-                        firstName: user.first_name,
-                        lastName: user.last_name || '',
-                        username: user.username || 'user' + user.id,
-                        photo_url: user.photo_url
-                    };
-                }
-            }
-            
-            // Update header
-            updateHeader();
-        }
-
-        // Update Header
-        function updateHeader() {
-            const currentUser = appState.currentUser;
-            const avatarSrc = currentUser.photo_url || `https://picsum.photos/seed/${currentUser.id}/100/100`;
-            const displayName = currentUser.firstName ? `${currentUser.firstName} ${currentUser.lastName || ''}` : 'Guest User';
-            
-            document.getElementById('headerAvatar').src = avatarSrc;
-            document.getElementById('headerName').textContent = displayName;
-        }
-
-        // Load Initial Data
-        function loadInitialData() {
-            loadSettings();
-            loadPaymentMethods();
-            loadUsers();
-            loadWithdrawals();
-        }
-
-        // Load Settings
-        function loadSettings() {
-            const saved = localStorage.getItem('appSettings');
-            if (saved) {
-                appState.settings = { ...appState.settings, ...JSON.parse(saved) };
-            }
-            
-            // Update form
-            document.getElementById('adsReward').value = appState.settings.ads_reward;
-            document.getElementById('adsLimit').value = appState.settings.ads_limit;
-            document.getElementById('currency').value = appState.settings.currency;
-            document.getElementById('monetagId').value = appState.settings.monetag_id;
-        }
-
-        // Load Payment Methods
-        function loadPaymentMethods() {
-            const saved = localStorage.getItem('paymentMethods');
-            if (saved) {
-                appState.paymentMethods = JSON.parse(saved);
-            } else {
-                appState.paymentMethods = [
-                    { id: 1, name: 'PayPal', minimum: 5.00, maximum: 1000.00 },
-                    { id: 2, name: 'Bank Transfer', minimum: 10.00, maximum: 5000.00 },
-                    { id: 3, name: 'Telegram Stars', minimum: 1.00, maximum: 100.00 }
-                ];
-            }
-            
-            updatePaymentMethodsTable();
-            updatePaymentMethodsForUser();
-        }
-
-        // Load Users
-        function loadUsers() {
-            const saved = localStorage.getItem('appUsers');
-            if (saved) {
-                appState.users = JSON.parse(saved);
-            } else {
-                appState.users = [
-                    {
-                        id: '123456',
-                        firstName: 'John',
-                        lastName: 'Doe',
-                        username: 'johndoe',
-                        balance: 25.50,
-                        adsWatched: 50,
-                        totalEarned: 5.00
-                    },
-                    {
-                        id: '789012',
-                        firstName: 'Jane',
-                        lastName: 'Smith',
-                        username: 'janesmith',
-                        balance: 15.75,
-                        adsWatched: 30,
-                        totalEarned: 3.00
-                    }
-                ];
-            }
-            
-            updateUsersTable();
-            updateAdminStats();
-        }
-
-        // Load Withdrawals
-        function loadWithdrawals() {
-            const saved = localStorage.getItem('appWithdrawals');
-            if (saved) {
-                appState.withdrawals = JSON.parse(saved);
-            } else {
-                appState.withdrawals = [
-                    {
-                        id: 1,
-                        userId: '123456',
-                        userName: 'John Doe',
-                        amount: 10.00,
-                        method: 'PayPal',
-                        status: 'Pending',
-                        date: new Date().toISOString().split('T')[0]
-                    },
-                    {
-                        id: 2,
-                        userId: '789012',
-                        userName: 'Jane Smith',
-                        amount: 5.00,
-                        method: 'Bank Transfer',
-                        status: 'Completed',
-                        date: new Date(Date.now() - 86400000).toISOString().split('T')[0]
-                    }
-                ];
-            }
-            
-            updateWithdrawalsTable();
-        }
-
-        // Setup Event Listeners
-        function setupEventListeners() {
-            // Navigation
-            document.getElementById('userNavBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = '/';
-            });
-            
-            document.getElementById('adminNavBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = '/admin';
-            });
-            
-            // Admin Login
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                adminLogin();
-            });
-            
-            // Settings Form
-            document.getElementById('settingsForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveSettings();
-            });
-            
-            // Payment Method Form
-            document.getElementById('paymentMethodForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                addPaymentMethod();
-            });
-            
-            // Withdraw Form
-            document.getElementById('withdrawForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                requestWithdrawal();
-            });
-            
-            // User Search
-            document.getElementById('userSearch').addEventListener('input', function(e) {
-                searchUsers(e.target.value);
-            });
-        }
-
-        // Admin Login
-        function adminLogin() {
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-            
-            if (username === 'admin' && password === 'shajahan@123') {
-                localStorage.setItem('adminLoggedIn', 'true');
-                isLoggedIn = true;
+                login = randomLogin;
+                domain = randomDomain;
+                currentEmail = `${login}@${domain}`;
                 
-                document.getElementById('adminLogin').style.display = 'none';
-                document.getElementById('adminDashboard').style.display = 'block';
+                document.getElementById('currentEmail').textContent = currentEmail;
                 
-                showToast('Login successful! Welcome admin.', 'success');
-            } else {
-                showToast('Invalid credentials! Please try again.', 'error');
+                // Clear previous emails
+                emails = [];
+                updateEmailList();
+                
+                // Check for existing emails
+                await checkEmails();
+                
+                showToast('success', 'নতুন ইমেইল তৈরি', 'সফলভাবে নতুন ইমেইল ঠিকানা তৈরি করা হয়েছে');
+                
+            } catch (error) {
+                console.error('Error generating email:', error);
+                showToast('error', 'ত্রুটি', 'ইমেইল তৈরি করতে ব্যর্থ হয়েছে');
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fas fa-sync"></i> <span>নতুন ইমেইল তৈরি করুন</span>';
             }
         }
 
-        // Save Settings
-        function saveSettings() {
-            appState.settings.ads_reward = parseFloat(document.getElementById('adsReward').value);
-            appState.settings.ads_limit = parseInt(document.getElementById('adsLimit').value);
-            appState.settings.currency = document.getElementById('currency').value;
-            appState.settings.monetag_id = document.getElementById('monetagId').value;
+        // Generate custom email
+        async function generateCustomEmail() {
+            const username = document.getElementById('customUsername').value.trim();
+            const selectedDomain = document.getElementById('domainSelect').value;
             
-            localStorage.setItem('appSettings', JSON.stringify(appState.settings));
-            
-            showToast('Settings saved successfully!', 'success');
-            updateUserPanel();
-        }
-
-        // Add Payment Method
-        function addPaymentMethod() {
-            const name = document.getElementById('methodName').value;
-            const min = parseFloat(document.getElementById('methodMin').value);
-            const max = parseFloat(document.getElementById('methodMax').value);
-            
-            if (!name || isNaN(min) || isNaN(max)) {
-                showToast('Please fill all fields correctly', 'error');
+            if (!username) {
+                showToast('error', 'ত্রুটি', 'অনুগ্রহ করে একটি ইউজারনেম লিখুন');
                 return;
             }
             
-            const newMethod = {
-                id: Date.now(),
-                name,
-                minimum: min,
-                maximum: max
-            };
+            login = username;
+            domain = selectedDomain.replace('@', '');
+            currentEmail = `${login}@${domain}`;
             
-            appState.paymentMethods.push(newMethod);
-            localStorage.setItem('paymentMethods', JSON.stringify(appState.paymentMethods));
+            document.getElementById('currentEmail').textContent = currentEmail;
             
-            updatePaymentMethodsTable();
-            updatePaymentMethodsForUser();
+            // Clear previous emails
+            emails = [];
+            updateEmailList();
             
-            document.getElementById('paymentMethodForm').reset();
-            showToast('Payment method added successfully!', 'success');
+            // Check for existing emails
+            await checkEmails();
+            
+            showToast('success', 'কাস্টম ইমেইল তৈরি', 'আপনার কাস্টম ইমেইল তৈরি করা হয়েছে');
+            
+            // Clear input
+            document.getElementById('customUsername').value = '';
         }
 
-        // Update Payment Methods Table
-        function updatePaymentMethodsTable() {
-            const tbody = document.getElementById('paymentMethodsTable');
-            if (!tbody) return;
+        // Check for new emails
+        async function checkEmails() {
+            if (!login || !domain) return;
             
-            tbody.innerHTML = appState.paymentMethods.map(method => `
-                <tr>
-                    <td><strong>${method.name}</strong></td>
-                    <td>$${method.minimum.toFixed(2)}</td>
-                    <td>$${method.maximum.toFixed(2)}</td>
-                    <td>
-                        <button class="btn btn-danger" onclick="deletePaymentMethod(${method.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
+            try {
+                const response = await fetch(`${API_BASE}?action=getMessages&login=${login}&domain=${domain}`);
+                const data = await response.json();
+                
+                if (data && Array.isArray(data)) {
+                    // Check for new emails
+                    const newEmails = data.filter(email => !emails.find(e => e.id === email.id));
+                    
+                    if (newEmails.length > 0) {
+                        newEmails.forEach(email => {
+                            emails.push({
+                                id: email.id,
+                                from: email.from,
+                                subject: email.subject,
+                                body: email.textBody || email.body,
+                                date: email.date,
+                                time: new Date(email.date * 1000).toLocaleTimeString('bn-BD'),
+                                unread: true
+                            });
+                        });
+                        
+                        updateEmailList();
+                        
+                        if (newEmails.length === 1) {
+                            showToast('info', 'নতুন ইমেইল', `${newEmails[0].from} থেকে নতুন ইমেইল এসেছে`);
+                        } else {
+                            showToast('info', 'নতুন ইমেইল', `${newEmails.length}টি নতুন ইমেইল এসেছে`);
+                        }
+                    }
+                }
+                
+                updateStats();
+                
+            } catch (error) {
+                console.error('Error checking emails:', error);
+            }
         }
 
-        // Update Payment Methods for User
-        function updatePaymentMethodsForUser() {
-            const container = document.getElementById('paymentMethods');
-            if (!container) return;
+        // Update email list display
+        function updateEmailList() {
+            const emailList = document.getElementById('emailList');
             
-            container.innerHTML = appState.paymentMethods.map(method => `
-                <div class="payment-method" onclick="selectPaymentMethod(${method.id})">
-                    <div class="payment-icon">
-                        <i class="fas fa-credit-card"></i>
+            if (emails.length === 0) {
+                emailList.innerHTML = `
+                    <div class="empty-inbox">
+                        <i class="fas fa-inbox"></i>
+                        <h3>ইনবক্স খালি</h3>
+                        <p>নতুন ইমেইল আসার অপেক্ষায় আছে...</p>
                     </div>
-                    <div class="payment-info">
-                        <h4>${method.name}</h4>
-                        <p>Min: $${method.minimum.toFixed(2)} - Max: $${method.maximum.toFixed(2)}</p>
+                `;
+                return;
+            }
+            
+            emailList.innerHTML = emails.map(email => {
+                const isOTP = email.subject.toLowerCase().includes('otp') || 
+                             email.subject.toLowerCase().includes('verification') ||
+                             email.subject.toLowerCase().includes('code') ||
+                             email.body.match(/\b\d{4,8}\b/);
+                
+                return `
+                    <div class="email-item ${email.unread ? 'unread' : ''}" onclick="viewEmail(${email.id})">
+                        <div class="email-header">
+                            <div class="email-from">${email.from}</div>
+                            <div class="email-time">${email.time}</div>
+                        </div>
+                        <div class="email-subject">${email.subject}</div>
+                        <div class="email-preview">${email.body.substring(0, 100)}...</div>
+                        ${isOTP ? '<span class="email-otp">OTP কোড</span>' : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // View email details
+        function viewEmail(emailId) {
+            const email = emails.find(e => e.id === emailId);
+            if (!email) return;
+            
+            // Mark as read
+            email.unread = false;
+            updateEmailList();
+            
+            // Extract OTP if present
+            const otpMatch = email.body.match(/\b\d{4,8}\b/);
+            const otpCode = otpMatch ? otpMatch[0] : null;
+            
+            // Show modal
+            const modal = document.getElementById('emailModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalBody.innerHTML = `
+                <div class="email-detail">
+                    <div class="detail-row">
+                        <div class="detail-label">প্রেরক:</div>
+                        <div class="detail-value">${email.from}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">প্রাপক:</div>
+                        <div class="detail-value">${currentEmail}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">বিষয়:</div>
+                        <div class="detail-value">${email.subject}</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">সময়:</div>
+                        <div class="detail-value">${new Date(email.date * 1000).toLocaleString('bn-BD')}</div>
                     </div>
                 </div>
-            `).join('');
-        }
-
-        // Select Payment Method
-        function selectPaymentMethod(methodId) {
-            document.querySelectorAll('.payment-method').forEach(el => {
-                el.classList.remove('selected');
-            });
-            event.currentTarget.classList.add('selected');
-            appState.selectedPaymentMethod = methodId;
-        }
-
-        // Delete Payment Method
-        function deletePaymentMethod(methodId) {
-            appState.paymentMethods = appState.paymentMethods.filter(method => method.id !== methodId);
-            localStorage.setItem('paymentMethods', JSON.stringify(appState.paymentMethods));
-            
-            updatePaymentMethodsTable();
-            updatePaymentMethodsForUser();
-            showToast('Payment method deleted successfully', 'success');
-        }
-
-        // Update Users Table
-        function updateUsersTable() {
-            const tbody = document.getElementById('usersTable');
-            if (!tbody) return;
-            
-            tbody.innerHTML = appState.users.map(user => `
-                <tr>
-                    <td>${user.id}</td>
-                    <td><strong>${user.firstName} ${user.lastName || ''}</strong></td>
-                    <td>@${user.username}</td>
-                    <td><strong>$${user.balance.toFixed(2)}</strong></td>
-                    <td>${user.adsWatched || 0}</td>
-                    <td>$${(user.totalEarned || 0).toFixed(2)}</td>
-                    <td>
-                        <button class="btn btn-primary" onclick="editUser('${user.id}')">
-                            <i class="fas fa-edit"></i>
+                <div class="email-content">
+                    ${email.body.replace(/\n/g, '<br>')}
+                </div>
+                ${otpCode ? `
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: #fef3c7; border-radius: 0.5rem; border-left: 4px solid #f59e0b;">
+                        <strong>OTP কোড:</strong> <span style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;">${otpCode}</span>
+                        <button onclick="copyOTP('${otpCode}')" style="margin-left: 1rem; padding: 0.5rem 1rem; background: #f59e0b; color: white; border: none; border-radius: 0.25rem; cursor: pointer;">
+                            <i class="fas fa-copy"></i> কপি করুন
                         </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // Search Users
-        function searchUsers(query) {
-            if (!query) {
-                updateUsersTable();
-                return;
-            }
-            
-            const filtered = appState.users.filter(user => 
-                user.firstName.toLowerCase().includes(query.toLowerCase()) ||
-                (user.lastName && user.lastName.toLowerCase().includes(query.toLowerCase())) ||
-                user.username.toLowerCase().includes(query.toLowerCase()) ||
-                user.id.includes(query)
-            );
-            
-            const tbody = document.getElementById('usersTable');
-            tbody.innerHTML = filtered.map(user => `
-                <tr>
-                    <td>${user.id}</td>
-                    <td><strong>${user.firstName} ${user.lastName || ''}</strong></td>
-                    <td>@${user.username}</td>
-                    <td><strong>$${user.balance.toFixed(2)}</strong></td>
-                    <td>${user.adsWatched || 0}</td>
-                    <td>$${(user.totalEarned || 0).toFixed(2)}</td>
-                    <td>
-                        <button class="btn btn-primary" onclick="editUser('${user.id}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // Edit User
-        function editUser(userId) {
-            const user = appState.users.find(u => u.id === userId);
-            if (!user) return;
-            
-            showToast(`Editing user: ${user.firstName} ${user.lastName || ''}`, 'info');
-        }
-
-        // Update Withdrawals Table
-        function updateWithdrawalsTable() {
-            const tbody = document.getElementById('withdrawalsTable');
-            if (!tbody) return;
-            
-            tbody.innerHTML = appState.withdrawals.map(withdrawal => `
-                <tr>
-                    <td>#${withdrawal.id}</td>
-                    <td><strong>${withdrawal.userName}</strong></td>
-                    <td><strong>$${withdrawal.amount.toFixed(2)}</strong></td>
-                    <td>${withdrawal.method}</td>
-                    <td>
-                        <span class="status-badge status-${withdrawal.status.toLowerCase()}">
-                            ${withdrawal.status}
-                        </span>
-                    </td>
-                    <td>${withdrawal.date}</td>
-                    <td>
-                        ${withdrawal.status === 'Pending' ? `
-                            <button class="btn btn-success" onclick="approveWithdrawal(${withdrawal.id})">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="btn btn-danger" onclick="rejectWithdrawal(${withdrawal.id})">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        ` : '-'}
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // Approve Withdrawal
-        function approveWithdrawal(withdrawalId) {
-            const withdrawal = appState.withdrawals.find(w => w.id === withdrawalId);
-            if (!withdrawal) return;
-            
-            withdrawal.status = 'Completed';
-            localStorage.setItem('appWithdrawals', JSON.stringify(appState.withdrawals));
-            
-            updateWithdrawalsTable();
-            showToast('Withdrawal approved successfully', 'success');
-        }
-
-        // Reject Withdrawal
-        function rejectWithdrawal(withdrawalId) {
-            const withdrawal = appState.withdrawals.find(w => w.id === withdrawalId);
-            if (!withdrawal) return;
-            
-            withdrawal.status = 'Rejected';
-            localStorage.setItem('appWithdrawals', JSON.stringify(appState.withdrawals));
-            
-            updateWithdrawalsTable();
-            showToast('Withdrawal rejected', 'warning');
-        }
-
-        // Start Ad Watching
-        function startAdWatch(adType) {
-            const rewards = {
-                premium: appState.settings.ads_reward * 2,
-                quick: appState.settings.ads_reward,
-                gaming: appState.settings.ads_reward * 1.5
-            };
-            
-            const reward = rewards[adType] || appState.settings.ads_reward;
-            showAdModal(reward);
-        }
-
-        // Show Ad Modal
-        function showAdModal(reward) {
-            const modal = document.getElementById('adModal');
-            const timer = document.getElementById('adTimer');
-            const progressBar = document.getElementById('adProgressBar');
-            const skipBtn = document.getElementById('skipAdBtn');
-            const skipCountdown = document.getElementById('skipCountdown');
+                    </div>
+                ` : ''}
+            `;
             
             modal.classList.add('active');
-            let timeLeft = 15;
-            let skipTimeLeft = 5;
-            
-            skipBtn.disabled = true;
-            
-            const adTimer = setInterval(() => {
-                timeLeft--;
-                timer.textContent = timeLeft;
-                progressBar.style.width = ((15 - timeLeft) / 15 * 100) + '%';
-                
-                if (timeLeft <= 0) {
-                    clearInterval(adTimer);
-                    clearInterval(skipTimer);
-                    completeAdWatch(reward);
-                }
-            }, 1000);
-            
-            const skipTimer = setInterval(() => {
-                skipTimeLeft--;
-                skipCountdown.textContent = skipTimeLeft;
-                
-                if (skipTimeLeft <= 0) {
-                    skipBtn.disabled = false;
-                    clearInterval(skipTimer);
-                }
-            }, 1000);
-            
-            window.currentAdTimer = adTimer;
-            window.currentSkipTimer = skipTimer;
         }
 
-        // Complete Ad Watching
-        function completeAdWatch(reward) {
-            const user = appState.currentUser;
-            
-            user.balance += reward;
-            user.totalEarned += reward;
-            user.todayEarned += reward;
-            user.adsWatched++;
-            user.level = Math.floor(user.adsWatched / 10) + 1;
-            
-            document.getElementById('adModal').classList.remove('active');
-            
-            updateUserPanel();
-            updateAdminStats();
-            
-            // Update user in array
-            const existingUser = appState.users.find(u => u.id === user.id);
-            if (existingUser) {
-                existingUser.balance = user.balance;
-                existingUser.adsWatched = user.adsWatched;
-                existingUser.totalEarned = user.totalEarned;
-                localStorage.setItem('appUsers', JSON.stringify(appState.users));
-            }
-            
-            showToast(`🎉 Earned ${appState.settings.currency} ${reward.toFixed(2)}!`, 'success');
-            
-            if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-        }
-
-        // Skip Ad
-        function skipAd() {
-            clearInterval(window.currentAdTimer);
-            clearInterval(window.currentSkipTimer);
-            document.getElementById('adModal').classList.remove('active');
-            showToast('Ad skipped - no rewards earned', 'warning');
-        }
-
-        // Request Withdrawal
-        function requestWithdrawal() {
-            const amount = parseFloat(document.getElementById('withdrawAmount').value);
-            const address = document.getElementById('withdrawAddress').value;
-            
-            if (!amount || !address || !appState.selectedPaymentMethod) {
-                showToast('Please fill all fields and select a payment method', 'error');
-                return;
-            }
-            
-            const method = appState.paymentMethods.find(m => m.id === appState.selectedPaymentMethod);
-            if (!method) {
-                showToast('Invalid payment method', 'error');
-                return;
-            }
-            
-            if (amount < method.minimum) {
-                showToast(`Minimum withdrawal amount is $${method.minimum}`, 'error');
-                return;
-            }
-            
-            if (amount > method.maximum) {
-                showToast(`Maximum withdrawal amount is $${method.maximum}`, 'error');
-                return;
-            }
-            
-            if (amount > appState.currentUser.balance) {
-                showToast('Insufficient balance', 'error');
-                return;
-            }
-            
-            const withdrawal = {
-                id: Date.now(),
-                userId: appState.currentUser.id,
-                userName: `${appState.currentUser.firstName} ${appState.currentUser.lastName || ''}`,
-                amount,
-                method: method.name,
-                status: 'Pending',
-                date: new Date().toISOString().split('T')[0]
-            };
-            
-            appState.withdrawals.push(withdrawal);
-            localStorage.setItem('appWithdrawals', JSON.stringify(appState.withdrawals));
-            
-            appState.currentUser.balance -= amount;
-            
-            const existingUser = appState.users.find(u => u.id === appState.currentUser.id);
-            if (existingUser) {
-                existingUser.balance = appState.currentUser.balance;
-                localStorage.setItem('appUsers', JSON.stringify(appState.users));
-            }
-            
-            updateWithdrawalsTable();
-            updateUserPanel();
-            updateAdminStats();
-            
-            document.getElementById('withdrawForm').reset();
-            document.querySelectorAll('.payment-method').forEach(el => {
-                el.classList.remove('selected');
+        // Copy OTP code
+        function copyOTP(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('success', 'OTP কপি করা হয়েছে', `OTP: ${code}`);
             });
-            appState.selectedPaymentMethod = null;
-            
-            showToast('Withdrawal request submitted successfully!', 'success');
         }
 
-        // Update UI
-        function updateUI() {
-            updateAdminStats();
-            updateUserPanel();
+        // Close modal
+        function closeModal() {
+            document.getElementById('emailModal').classList.remove('active');
         }
 
-        // Update Admin Stats
-        function updateAdminStats() {
-            const totalUsersEl = document.getElementById('totalUsers');
-            const totalAdsEl = document.getElementById('totalAds');
-            const totalRevenueEl = document.getElementById('totalRevenue');
-            const totalWithdrawalsEl = document.getElementById('totalWithdrawals');
+        // Refresh inbox
+        async function refreshInbox() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            refreshBtn.classList.add('spinning');
             
-            if (totalUsersEl) totalUsersEl.textContent = appState.users.length;
-            if (totalAdsEl) totalAdsEl.textContent = appState.users.reduce((sum, user) => sum + (user.adsWatched || 0), 0);
-            if (totalRevenueEl) totalRevenueEl.textContent = '$' + appState.users.reduce((sum, user) => sum + (user.totalEarned || 0), 0).toFixed(2);
-            if (totalWithdrawalsEl) totalWithdrawalsEl.textContent = appState.withdrawals.length;
+            await checkEmails();
+            
+            setTimeout(() => {
+                refreshBtn.classList.remove('spinning');
+                showToast('success', 'রিফ্রেশ করা হয়েছে', 'ইনবক্স আপডেট করা হয়েছে');
+            }, 1000);
         }
 
-        // Update User Panel
-        function updateUserPanel() {
-            const user = appState.currentUser;
-            const avatarSrc = user.photo_url || `https://picsum.photos/seed/${user.id}/200/200`;
+        // Clear inbox
+        function clearInbox() {
+            if (emails.length === 0) {
+                showToast('info', 'ইনবক্স খালি', 'মুছে ফেলার জন্য কোনো ইমেইল নেই');
+                return;
+            }
             
-            // Update user info
-            const avatarLargeEl = document.getElementById('userAvatarLarge');
-            const nameLargeEl = document.getElementById('userNameLarge');
-            const usernameEl = document.getElementById('userUsername');
-            const balanceEl = document.getElementById('userBalance');
-            
-            if (avatarLargeEl) avatarLargeEl.src = avatarSrc;
-            if (nameLargeEl) nameLargeEl.textContent = `${user.firstName} ${user.lastName || ''}`;
-            if (usernameEl) usernameEl.textContent = '@' + user.username;
-            if (balanceEl) balanceEl.textContent = appState.settings.currency + ' ' + user.balance.toFixed(2);
-            
-            // Update stats
-            const adsWatchedEl = document.getElementById('userAdsWatched');
-            const totalEarnedEl = document.getElementById('userTotalEarned');
-            const todayEarnedEl = document.getElementById('userTodayEarned');
-            const levelEl = document.getElementById('userLevel');
-            
-            if (adsWatchedEl) adsWatchedEl.textContent = user.adsWatched;
-            if (totalEarnedEl) totalEarnedEl.textContent = appState.settings.currency + ' ' + user.totalEarned.toFixed(2);
-            if (todayEarnedEl) todayEarnedEl.textContent = appState.settings.currency + ' ' + user.todayEarned.toFixed(2);
-            if (levelEl) levelEl.textContent = user.level;
+            if (confirm('আপনি কি সব ইমেইল মুছে ফেলতে চান?')) {
+                emails = [];
+                updateEmailList();
+                updateStats();
+                showToast('success', 'সব মুছে ফেলা হয়েছে', 'ইনবক্স সফলভাবে পরিষ্কার করা হয়েছে');
+            }
         }
 
-        // Show Toast
-        function showToast(message, type = 'success') {
+        // Start auto refresh
+        function startAutoRefresh() {
+            autoRefreshInterval = setInterval(() => {
+                checkEmails();
+            }, 5000); // Check every 5 seconds
+        }
+
+        // Update timer
+        function updateTimer() {
+            setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('activeTime').textContent = 
+                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('totalEmails').textContent = emails.length;
+        }
+
+        // Copy email to clipboard
+        function copyEmail() {
+            navigator.clipboard.writeText(currentEmail).then(() => {
+                showToast('success', 'কপি করা হয়েছে', 'ইমেইল ঠিকানা ক্লিপবোর্ডে কপি করা হয়েছে');
+            }).catch(() => {
+                showToast('error', 'ত্রুটি', 'কপি করতে ব্যর্থ হয়েছে');
+            });
+        }
+
+        // Share email
+        function shareEmail() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'TempMail Pro - টেম্পোরারি ইমেইল',
+                    text: 'আমার টেম্পোরারি ইমেইল: ' + currentEmail,
+                    url: window.location.href
+                });
+            } else {
+                copyEmail();
+            }
+        }
+
+        // Download QR Code
+        function downloadQR() {
+            // Create QR code URL
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentEmail)}`;
+            
+            // Download the QR code
+            const link = document.createElement('a');
+            link.href = qrUrl;
+            link.download = `qrcode-${currentEmail}.png`;
+            link.click();
+            
+            showToast('success', 'QR কোড ডাউনলোড', 'QR কোড সফলভাবে ডাউনলোড হয়েছে');
+        }
+
+        // Show toast notification
+        function showToast(type, title, text) {
             const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            const toastIcon = toast.querySelector('.toast-icon');
+            const icon = toast.querySelector('.toast-icon i');
+            const titleEl = toast.querySelector('.toast-title');
+            const textEl = toast.querySelector('.toast-text');
             
-            toastMessage.textContent = message;
-            toast.className = 'toast show ' + type;
+            // Update toast content
+            toast.className = 'toast ' + type;
+            titleEl.textContent = title;
+            textEl.textContent = text;
             
             // Update icon
-            switch (type) {
-                case 'success':
-                    toastIcon.className = 'fas fa-check-circle toast-icon';
-                    break;
-                case 'error':
-                    toastIcon.className = 'fas fa-exclamation-circle toast-icon';
-                    break;
-                case 'warning':
-                    toastIcon.className = 'fas fa-exclamation-triangle toast-icon';
-                    break;
-                case 'info':
-                    toastIcon.className = 'fas fa-info-circle toast-icon';
-                    break;
+            if (type === 'success') {
+                icon.className = 'fas fa-check';
+            } else if (type === 'error') {
+                icon.className = 'fas fa-exclamation';
+            } else if (type === 'info') {
+                icon.className = 'fas fa-info';
             }
             
+            // Show toast
+            toast.classList.add('show');
+            
+            // Hide after 3 seconds
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + G for new email
+            if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
+                e.preventDefault();
+                generateNewEmail();
+            }
+            
+            // Ctrl/Cmd + C to copy email
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c' && !window.getSelection().toString()) {
+                e.preventDefault();
+                copyEmail();
+            }
+            
+            // Ctrl/Cmd + R to refresh
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                refreshInbox();
+            }
+            
+            // Escape to close modal
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('emailModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', function() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        });
     </script>
 </body>
 </html>
