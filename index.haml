@@ -1,120 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
-    <title> Bombele>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Web2APK Builder — Professional App Creator</title>
 
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .input-group input {
-            width: 90%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .join-tools {
-            margin-top: 20px;
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-radius: 4px;
-            text-align: center;
-        }
-
-        .join-tools a {
-            text-decoration: none;
-            color: #007bff;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .join-tools img {
-            width: 20px;
-            margin-left: 5px;
-        }
-    </style>
+  <style>
+    :root {
+      --primary:#2563eb;
+      --bg:#f1f5f9;
+      --text:#1e293b;
+      --card:#ffffff;
+      --radius:14px;
+    }
+    * {
+      box-sizing:border-box;
+      transition:all 0.2s ease;
+    }
+    body {
+      margin:0;
+      font-family:'Poppins', sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    header {
+      background:var(--primary);
+      color:white;
+      text-align:center;
+      padding:25px 10px;
+      font-size:28px;
+      font-weight:700;
+      letter-spacing:0.5px;
+      box-shadow:0 4px 15px rgba(0,0,0,0.2);
+    }
+    .wrapper {
+      max-width:950px;
+      margin:40px auto;
+      background:var(--card);
+      padding:35px;
+      border-radius:var(--radius);
+      box-shadow:0 10px 30px rgba(0,0,0,0.1);
+    }
+    label {
+      display:block;
+      margin-top:18px;
+      font-weight:600;
+      font-size:15px;
+    }
+    input,select,button {
+      width:100%;
+      padding:14px;
+      margin-top:8px;
+      border:1px solid #cbd5e1;
+      border-radius:var(--radius);
+      font-size:15px;
+    }
+    input[type=file] {
+      border:2px dashed #cbd5e1;
+      background:#f8fafc;
+    }
+    input[type=file]:hover {
+      border-color:var(--primary);
+    }
+    button {
+      background:var(--primary);
+      color:white;
+      font-weight:700;
+      border:none;
+      margin-top:25px;
+      cursor:pointer;
+    }
+    button:hover {
+      background:#1e40af;
+    }
+    .permissions {
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+      gap:6px;
+      margin-top:10px;
+    }
+    .perm-item {
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      padding:10px;
+      border-radius:var(--radius);
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .perm-item:hover {
+      background:#eff6ff;
+      border-color:var(--primary);
+    }
+    .result {
+      text-align:center;
+      font-weight:700;
+      font-size:18px;
+      margin-top:30px;
+    }
+    footer {
+      text-align:center;
+      margin-top:40px;
+      color:#475569;
+      font-size:14px;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>bKash Bomber</h1>
-        <img src="https:///your_logo.png" alt="Logo" style="width: 100px; margin-bottom: 20px;">
+  <header>Web2APK — Professional App Creator</header>
 
-        <div class="input-group">
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" placeholder="017xxxxxxxx">
-        </div>
+  <div class="wrapper">
+    <label>আপনার index.html বা ZIP ফাইল আপলোড করুন:</label>
+    <input type="file" id="htmlFile" accept=".html,.zip" />
 
-        <div class="input-group">
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" placeholder="1000">
-        </div>
+    <label>App Icon (PNG/JPG):</label>
+    <input type="file" id="iconFile" accept="image/*" />
 
-        <button onclick="sendRequests()">Submit</button>
+    <label>App Name:</label>
+    <input id="appName" placeholder="My Awesome App" />
 
-        <div class="join-tools">
-            <a href="https://t.me/yourtg" target="_blank">
-                Join For More Tools <img src="https://tg.your_logo.png" alt="Telegram">
-            </a>
-        </div>
+    <label>Package Name:</label>
+    <input id="packageName" placeholder="com.example.myapp" />
 
-        <p id="message"></p>
-    </div>
+    <label>Permissions:</label>
+    <div class="permissions">
+      <div class="perm-item"><input type="checkbox" value="INTERNET"> INTERNET</div>
+      <div class="perm-item"><input type="checkbox" value="CAMERA"> CAMERA</div>
+      <div class="perm-item"><input type="checkbox" value="LOCATION"> LOCATION</div>
+      <div class="perm-item"><input type="checkbox" value="STORAGE"> STORAGE</div>
+      <div class="perm-item"><input type="checkbox" value="AUDIO"> AUDIO RECORD</div>
+    </div>
 
-    <script>
-        function sendRequests() {
-            const phoneNumber = document.getElementById("phone").value;
-            const apiUrl = আপনার এপিআই দিবেন${phoneNumber};
-            const messageElement = document.getElementById("message");
+    <label>JavaScript Protection (Obfuscate):</label>
+    <select id="obfuscateOpt">
+      <option value="true">Enable</option>
+      <option value="false">Disable</option>
+    </select>
 
-            fetch(apiUrl)
-                .then(response => response.text())
-                .then(data => {
-                    if (data.includes("success")) {
-                        messageElement.textContent = "Request sent successfully!";
-                        messageElement.style.color = "green";
-                    } else {
-                        messageElement.textContent = "Failed to send request.";
-                        messageElement.style.color = "red";
-                    }
-                })
-                .catch(error => {
-                    messageElement.textContent = "An error occurred.";
-                    messageElement.style.color = "red";
-                });
-        }
-    </script>
+    <button id="generateBtn">Generate APK</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <footer>© 2025 Web2APK | Developed with ❤️ by You</footer>
+
+  <script>
+    document.getElementById('generateBtn').onclick = ()=>{
+      document.getElementById('result').innerHTML =
+        "⚙️ আপনার ফাইল প্রক্রিয়াকরণ হচ্ছে... (Demo UI - Backend সংযুক্ত নয়)";
+      setTimeout(()=>{
+        document.getElementById('result').innerHTML =
+          "❌ Backend সংযুক্ত না থাকায় APK তৈরি করা সম্ভব নয়। তবে UI সম্পূর্ণ প্রস্তুত!";
+      }, 2000);
+    };
+  </script>
 </body>
 </html>
